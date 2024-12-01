@@ -11,9 +11,22 @@ namespace ZTP_WPF_Project.MVVM.Core
 {
     public static class DataManager
     {
+        private static readonly string TransactionsDb = "_TransactionDB.xml";
+
+        public static List<TransactionModel>? LoadTransactions()
+        {
+            return LoadFromXmlFile<TransactionModel>(TransactionsDb);
+        }
+
+        public static void SaveTransactions(List<TransactionModel> transactions)
+        {
+            SaveToXMLFile<TransactionModel>(transactions, TransactionsDb);
+        }
+
+
         #region Private Functions XML Handlers
 
-        public static List<T> LoadFromXmlFile<T>(string settingsPath)
+        private static List<T>? LoadFromXmlFile<T>(string settingsPath)
         {
             try
             {
@@ -26,7 +39,7 @@ namespace ZTP_WPF_Project.MVVM.Core
                 var serializer = new XmlSerializer(typeof(List<T>));
                 using (var reader = new StreamReader(settingsPath))
                 {
-                    return (List<T>)serializer.Deserialize(reader);
+                    return (List<T>?)serializer.Deserialize(reader);
                 }
             }
             catch (FileNotFoundException ex)
@@ -36,7 +49,7 @@ namespace ZTP_WPF_Project.MVVM.Core
             }
         }
 
-        public static void SaveToXMLFile<T>(List<T> objectModel, string settingsPath)
+        private static void SaveToXMLFile<T>(List<T> objectModel, string settingsPath)
         {
             try
             {

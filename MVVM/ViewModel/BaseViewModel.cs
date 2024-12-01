@@ -8,12 +8,15 @@ namespace ZTP_WPF_Project.MVVM.ViewModel
 {
     public abstract class BaseViewModel<T>
     {
-        protected List<T> _values;
+        protected List<T>? _values;
 
         public abstract void Load();
         public abstract void Save();
-        public List<T> GetAll() { return _values; }
-        public abstract T GetById(string id);
+        public List<T>? GetAll() { return _values; }
+        public abstract T? GetById(string id);
         public abstract bool ModifyById(string id, T obj);
+        public abstract bool DeleteById(string id);
+        public abstract bool DeleteAll();
+        public abstract bool Add(T obj);
     }
 }

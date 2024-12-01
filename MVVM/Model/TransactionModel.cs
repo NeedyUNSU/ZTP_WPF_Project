@@ -12,19 +12,27 @@ namespace ZTP_WPF_Project.MVVM.Model
         public string? Description { get; set; }
 		public float Amount { get; set; }
 		public TransactionType _Type { get; set; }
-		private DateTime date = DateTime.Now;
-        public TransactionCategoryModel _categoryModel;
-		public string? CategoryId => _categoryModel.Id;
-        public string? CategoryName => _categoryModel.Name;
-        public string? CategoryDesc => _categoryModel.Description;
+		public DateTime AddedDate { get; set; } = DateTime.Now;
+        private TransactionCategoryModel? _categoryModel { get; set; }
+        public string? CategoryId => _categoryModel?.Id;
+        public string? CategoryName => _categoryModel?.Name;
+        public string? CategoryDesc => _categoryModel?.Description;
 
-        public DateTime AddedDate
-		{
-			get { return date; }
-			set { date = value; }
-		}
+        public TransactionCategoryModel? _category
+        {
+            get => _categoryModel;
+            set
+            {
+                if (_Type == TransactionType.Expense) _categoryModel = value;
+                else
+                {
+                    _categoryModel = null;
+                    throw new ArgumentException($"Invalid TransactionType refering to category.");
+                }
+            }
+        }
 
-		public string StringType
+        public string StringType
 		{
 			get => _Type.ToString();
 			set
@@ -36,7 +44,7 @@ namespace ZTP_WPF_Project.MVVM.Model
 				else
 				{
 					_Type = TransactionType.None;
-                    throw new ArgumentException($"Invalid UserType value: {value}");
+                    throw new ArgumentException($"Invalid TransactionType value: {value}");
                 }
 			}
 		}
@@ -47,8 +55,8 @@ namespace ZTP_WPF_Project.MVVM.Model
 			Description = desc;
 			Amount = amount;
 			_Type = type;
-			_categoryModel = category;
-			this.date = date;
+            _category = category;
+			AddedDate = date;
         }
 
         public TransactionModel(string title, string desc, float amount, TransactionType type, TransactionCategoryModel category)
@@ -57,7 +65,7 @@ namespace ZTP_WPF_Project.MVVM.Model
             Description = desc;
             Amount = amount;
             _Type = type;
-            _categoryModel = category;
+            _category = category;
         }
     }
 
