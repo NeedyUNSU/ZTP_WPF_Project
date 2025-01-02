@@ -11,8 +11,11 @@ namespace ZTP_WPF_Project.MVVM.Core
 {
     public static class DataManager
     {
-        private static readonly string TransactionsDb = "_TransactionDB.xml";
 
+        private static readonly string TransactionsDb = "_TransactionDB.xml";
+        private static readonly string TransactionsCategoryDb = "_TransactionCategoryDB.xml";
+
+        #region TransactionsDb
         public static List<TransactionModel>? LoadTransactions()
         {
             return LoadFromXmlFile<TransactionModel>(TransactionsDb);
@@ -22,7 +25,19 @@ namespace ZTP_WPF_Project.MVVM.Core
         {
             SaveToXMLFile<TransactionModel>(transactions, TransactionsDb);
         }
+        #endregion
 
+        #region TransactionsDb
+        public static List<TransactionCategoryModel>? LoadTransactionCategories()
+        {
+            return LoadFromXmlFile<TransactionCategoryModel>(TransactionsCategoryDb);
+        }
+
+        public static void SaveTransactionCategories(List<TransactionCategoryModel> transactionsCategories)
+        {
+            SaveToXMLFile<TransactionCategoryModel>(transactionsCategories, TransactionsCategoryDb);
+        }
+        #endregion
 
         #region Private Functions XML Handlers
 

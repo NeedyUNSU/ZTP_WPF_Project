@@ -51,13 +51,6 @@ namespace ZTP_WPF_Project.MVVM.ViewModel
             return _values.Remove(val);
         }
 
-        public override bool DeleteAll()
-        {
-            _values?.Clear();
-            if (_values?.Count == 0) return true;
-            else return false;
-        }
-
         public override bool Add(TransactionModel obj)
         {
             if (obj == null) return false;

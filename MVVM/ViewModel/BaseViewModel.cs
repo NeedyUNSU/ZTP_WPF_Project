@@ -16,7 +16,12 @@ namespace ZTP_WPF_Project.MVVM.ViewModel
         public abstract T? GetById(string id);
         public abstract bool ModifyById(string id, T obj);
         public abstract bool DeleteById(string id);
-        public abstract bool DeleteAll();
+        public bool DeleteAll()
+        {
+            _values?.Clear();
+            if (_values?.Count == 0) return true;
+            else return false;
+        }
         public abstract bool Add(T obj);
     }
 }
