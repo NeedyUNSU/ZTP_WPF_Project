@@ -16,5 +16,13 @@ namespace ZTP_WPF_Project.MVVM.Model
             this.Name = name;
             this.Description = desc;
         }
+
+        public TransactionCategoryModel(TransactionCategoryModel obj)
+        {
+            this.Name = obj.Name;
+            this.Description = obj.Description;
+        }
+
+        public TransactionCategoryModel() {}
     }
 }

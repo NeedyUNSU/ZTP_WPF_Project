@@ -8,6 +8,7 @@ namespace ZTP_WPF_Project.MVVM.Model
 {
     public class ReportModel : BaseModel
     {
+        public List<TransactionModel>? transactions;
 
     }
 }

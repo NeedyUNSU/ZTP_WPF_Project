@@ -16,7 +16,7 @@ namespace ZTP_WPF_Project.MVVM.ViewModel
 
             if (_values?.Where(x => x.Id == obj.Id).Where(x => x?.Name?.ToLower() == obj?.Name?.ToLower()).Where(x => x?.Description?.ToLower() == obj?.Description?.ToLower()).Count() == 0)
             {
-                _values.Add(obj);
+                _values.Add(new(obj));
                 return true;
             }
             return false;
@@ -27,7 +27,7 @@ namespace ZTP_WPF_Project.MVVM.ViewModel
             var val = _values?.Where(x => x.Id == id).FirstOrDefault();
             if (val == null) return false;
 
-            return _values.Remove(val);
+            return _values != null ? _values.Remove(val) : false;
         }
 
         public override TransactionCategoryModel? GetById(string id)
@@ -56,7 +56,7 @@ namespace ZTP_WPF_Project.MVVM.ViewModel
 
         public override void Save()
         {
-            DataManager.SaveTransactionCategories(_values);
+            DataManager.SaveTransactionCategories(_values != null ? _values : new());
         }
     }
 }
