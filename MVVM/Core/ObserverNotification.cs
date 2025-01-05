@@ -9,12 +9,14 @@ namespace ZTP_WPF_Project.MVVM.Core
 {
     public interface IObserver
     {
-        void Update(double expense);
+        void Update(double budget, double expense);
     }
 
-    public class Notifications
+    public class Notification
     {
         private readonly List<IObserver> observers = new();
+
+        public double CurrentBudget { get; set; }
 
         private double expense;
 
@@ -42,14 +44,14 @@ namespace ZTP_WPF_Project.MVVM.Core
         {
             foreach (var observer in observers)
             {
-                observer.Update(expense);
+                observer.Update(CurrentBudget, expense);
             }
         }
     }
 
     public class BudgetOverNinety : IObserver
     {
-        private readonly double budget;
+        private double budget;
         private double expensesSum;
 
         public BudgetOverNinety(double budget)
@@ -57,8 +59,9 @@ namespace ZTP_WPF_Project.MVVM.Core
             this.budget = budget;
         }
 
-        public void Update(double expense)
+        public void Update(double budget, double expense)
         {
+            this.budget = budget;
             expensesSum += expense;
             if (expensesSum > (budget * 0.9))
             {
@@ -69,7 +72,7 @@ namespace ZTP_WPF_Project.MVVM.Core
 
     public class Overrun : IObserver
     {
-        private readonly double budget;
+        private double budget;
         private double expensesSum;
 
         public Overrun(double budget)
@@ -77,8 +80,9 @@ namespace ZTP_WPF_Project.MVVM.Core
             this.budget = budget;
         }
 
-        public void Update(double expense)
+        public void Update(double budget, double expense)
         {
+            this.budget = budget;
             expensesSum += expense;
             if (expensesSum > budget)
             {
@@ -89,7 +93,7 @@ namespace ZTP_WPF_Project.MVVM.Core
 
     public class Congratulation : IObserver
     {
-        private readonly double budget;
+        private double budget;
         private double expensesSum;
 
         public Congratulation(double budget)
@@ -97,8 +101,9 @@ namespace ZTP_WPF_Project.MVVM.Core
             this.budget = budget;
         }
 
-        public void Update(double expense)
+        public void Update(double budget, double expense)
         {
+            this.budget = budget;
             expensesSum += expense;
             if (expense == 0 && expensesSum < budget)
             {
