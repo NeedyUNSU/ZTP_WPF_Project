@@ -10,5 +10,9 @@ namespace ZTP_WPF_Project.MVVM.Model
     {
         public List<TransactionModel>? transactions;
 
+        public override bool Validate()
+        {
+            if (transactions?.Count != 0) return true; else return false;
+        }
     }
 }

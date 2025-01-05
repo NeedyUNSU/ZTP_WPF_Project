@@ -23,6 +23,12 @@ namespace ZTP_WPF_Project.MVVM.Model
             this.Description = obj.Description;
         }
 
+        // XML Handler
         public TransactionCategoryModel() {}
+
+        public override bool Validate()
+        {
+            if (!string.IsNullOrWhiteSpace(Name) && !string.IsNullOrWhiteSpace(Description)) { return true; } else { return false; }
+        }
     }
 }

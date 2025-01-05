@@ -16,5 +16,6 @@ namespace ZTP_WPF_Project.MVVM.Model
 			set { id = value; }
 		}
 
+		public abstract bool Validate();
 	}
 }

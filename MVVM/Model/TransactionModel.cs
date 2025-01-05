@@ -82,7 +82,24 @@ namespace ZTP_WPF_Project.MVVM.Model
             _category = category;
         }
 
+        // XML Handler
         public TransactionModel() {}
+
+        public override bool Validate()
+        {
+            if (!string.IsNullOrWhiteSpace(Title) && !string.IsNullOrWhiteSpace(Description) && !string.IsNullOrWhiteSpace(Id) && Amount > 0 && _Type != TransactionType.None)
+            {
+                if (_Type == TransactionType.Expense)
+                {
+                    if (_category != null && !string.IsNullOrWhiteSpace(CategoryId))
+                    {
+                        return true;
+                    }
+                    else return false;  
+                }
+                else return true;
+            } else return false;
+        }
     }
 
 	public enum TransactionType

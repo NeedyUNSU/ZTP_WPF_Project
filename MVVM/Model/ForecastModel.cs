@@ -8,5 +8,9 @@ namespace ZTP_WPF_Project.MVVM.Model
 {
     public class ForecastModel : BaseModel
     {
+        public override bool Validate()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

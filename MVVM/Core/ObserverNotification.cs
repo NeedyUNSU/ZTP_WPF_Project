@@ -12,7 +12,7 @@ namespace ZTP_WPF_Project.MVVM.Core
         void Update(double expense);
     }
 
-    public class Notification
+    public class Notifications
     {
         private readonly List<IObserver> observers = new();
 
