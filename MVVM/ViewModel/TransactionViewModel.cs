@@ -23,6 +23,9 @@ namespace ZTP_WPF_Project.MVVM.ViewModel
             Notification.Attach(new Congratulation(GetBudget()));
         }
 
+
+
+
         public override void Load()
         {
             _values = DataManager.LoadTransactions();
@@ -134,7 +137,7 @@ namespace ZTP_WPF_Project.MVVM.ViewModel
         {
             if (_values == null) return 0;
 
-            return _values.Sum(o => o.Amount);
+            return _values.Where(x=>x._Type == TransactionType.Income).Sum(o => o.Amount);
         }
 
         private void NotifyObservers(double Expense)
