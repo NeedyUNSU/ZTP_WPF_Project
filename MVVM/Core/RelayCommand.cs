@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using ZTP_WPF_Project.MVVM.Model;
+using ZTP_WPF_Project.MVVM.ViewModel;
 
 namespace ZTP_WPF_Project.MVVM.Core
 {
@@ -35,103 +38,130 @@ namespace ZTP_WPF_Project.MVVM.Core
         }
     }
 
-
-
-    public class CommandHistory
+    public class CommandManager
     {
-        private List<ICommand> _commands;
+        private readonly Stack<TransactionCommand> _undoStack = new();
+        private readonly Stack<TransactionCommand> _redoStack = new();
 
-        public CommandHistory() 
-        { 
-            _commands = new List<ICommand>();
-        }
-    
-        public void push(ICommand command)
+        public void ExecuteCommand(TransactionCommand command)
         {
-            if (command == null) return;
-            _commands.Add(command);
+            command.Execute(null);
+            _undoStack.Push(command);
+            _redoStack.Clear();
         }
 
-        public ICommand pop()
+        public void Undo()
         {
-            if (_commands.Count == 0) return null;
-            return _commands[_commands.Count - 1];
+            if (_undoStack.Any())
+            {
+                var command = _undoStack.Pop();
+                command.Undo();
+                _redoStack.Push(command);
+            }
+        }
+
+        public void Redo()
+        {
+            if (_redoStack.Any())
+            {
+                var command = _redoStack.Pop();
+                command.Execute(null);
+                _undoStack.Push(command);
+            }
         }
     }
 
-    public class AddCommand : ICommand
-    {
-        public event EventHandler? CanExecuteChanged;
 
-        public bool CanExecute(object? parameter)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Execute(object? parameter)
-        {
-            throw new NotImplementedException();
-        }
-    }
-
-    public class DeleteCommand : ICommand
+    public abstract class TransactionCommand : ICommand
     {
         public event EventHandler? CanExecuteChanged;
 
-        public bool CanExecute(object? parameter)
-        {
-            throw new NotImplementedException();
-        }
+        public abstract bool CanExecute(object? parameter);
+        public abstract void Execute(object? parameter);
 
-        public void Execute(object? parameter)
-        {
-            throw new NotImplementedException();
-        }
+        public abstract void Undo();
     }
 
-    public class EditCommand : ICommand
+    public class AddTransactionCommand : TransactionCommand
     {
-        public event EventHandler? CanExecuteChanged;
+        private readonly ObservableCollection<TransactionModel> _transactions;
+        private TransactionModel _transaction;
 
-        public bool CanExecute(object? parameter)
+        public AddTransactionCommand(ObservableCollection<TransactionModel> transactions, TransactionModel transaction)
         {
-            throw new NotImplementedException();
+            _transactions = transactions;
+            _transaction = transaction;
         }
 
-        public void Execute(object? parameter)
+        public override bool CanExecute(object? parameter) => _transaction != null;
+
+        public override void Execute(object? parameter)
         {
-            throw new NotImplementedException();
+            _transactions.Add(_transaction);
         }
 
+        public override void Undo()
+        {
+            _transactions.Remove(_transaction);
+        }
     }
 
-    public class RedoCommand : ICommand
+    public class RemoveTransactionCommand : TransactionCommand
     {
-        public event EventHandler? CanExecuteChanged;
+        private readonly ObservableCollection<TransactionModel> _transactions;
+        private TransactionModel _transaction;
 
-        public bool CanExecute(object? parameter)
+        public RemoveTransactionCommand(ObservableCollection<TransactionModel> transactions, TransactionModel transaction)
         {
-            throw new NotImplementedException();
+            _transactions = transactions;
+            _transaction = transaction;
         }
 
-        public void Execute(object? parameter)
+        public override bool CanExecute(object? parameter) => _transactions.Contains(_transaction);
+
+        public override void Execute(object? parameter)
         {
-            throw new NotImplementedException();
+            _transactions.Remove(_transaction);
+        }
+
+        public override void Undo()
+        {
+            _transactions.Add(_transaction);
         }
     }
 
-    public class UndoCommand : ICommand
+    public class EditTransactionCommand : TransactionCommand
     {
-        public event EventHandler? CanExecuteChanged;
+        private readonly TransactionModel _originalTransaction;
+        private readonly TransactionModel _updatedTransaction;
+        private readonly ObservableCollection<TransactionModel> _transactions;
 
-        public bool CanExecute(object? parameter)
+        public EditTransactionCommand(ObservableCollection<TransactionModel> transactions, TransactionModel original, TransactionModel updated)
         {
-            throw new NotImplementedException();
+            _transactions = transactions;
+            _originalTransaction = original;
+            _updatedTransaction = updated;
         }
 
-        public void Execute(object? parameter)
+        public override bool CanExecute(object? parameter) => _transactions.Contains(_originalTransaction);
+
+        public override void Execute(object? parameter)
         {
-            throw new NotImplementedException();
+            int index = _transactions.IndexOf(_originalTransaction);
+            if (index >= 0)
+            {
+                _transactions[index] = _updatedTransaction;
+            }
+        }
+
+        public override void Undo()
+        {
+            int index = _transactions.IndexOf(_updatedTransaction);
+            if (index >= 0)
+            {
+                _transactions[index] = _originalTransaction;
+            }
         }
     }
+
 }

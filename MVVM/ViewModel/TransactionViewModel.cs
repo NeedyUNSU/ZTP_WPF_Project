@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using ZTP_WPF_Project.MVVM.Core;
 using ZTP_WPF_Project.MVVM.Model;
+using CommandManager = ZTP_WPF_Project.MVVM.Core.CommandManager;
 using RelayCommand = ZTP_WPF_Project.MVVM.Core.RelayCommand;
 
 namespace ZTP_WPF_Project.MVVM.ViewModel
@@ -14,6 +16,23 @@ namespace ZTP_WPF_Project.MVVM.ViewModel
         protected readonly TransactionCategoryViewModel categoryVM;
         protected Notification Notification;
 
+        private readonly CommandManager _commandManager = new();
+
+        private TransactionModel selectedTransaction;
+
+        public TransactionModel SelectedTransaction
+        {
+            get { return selectedTransaction; }
+            set { selectedTransaction = value; OnPropertyChanged(); }
+        }
+
+
+        public ICommand AddCommand { get; }
+        public ICommand RemoveCommand { get; }
+        public ICommand EditCommand { get; }
+        public ICommand UndoCommand { get; }
+        public ICommand RedoCommand { get; }
+
         public TransactionViewModel(TransactionCategoryViewModel categoryVM)
         {
             this.categoryVM = categoryVM;
@@ -22,6 +41,43 @@ namespace ZTP_WPF_Project.MVVM.ViewModel
             Notification.Attach(new BudgetOverNinety(GetBudget()));
             Notification.Attach(new Overrun(GetBudget()));
             Notification.Attach(new Congratulation(GetBudget()));
+
+            AddCommand = new RelayCommand(param =>
+            {
+                var transaction = param as TransactionModel;
+                if (transaction != null)
+                {
+                    var command = new AddTransactionCommand(new(_values), transaction);
+                    _commandManager.ExecuteCommand(command);
+                }
+            });
+
+            RemoveCommand = new RelayCommand(param =>
+            {
+                var transaction = param as TransactionModel;
+                if (transaction != null)
+                {
+                    var command = new RemoveTransactionCommand(new(_values), transaction);
+                    _commandManager.ExecuteCommand(command);
+                }
+            });
+
+            EditCommand = new RelayCommand(param =>
+            {
+                var updatedTransaction = param as TransactionModel;
+                if (updatedTransaction != null)
+                {
+                    var originalTransaction = GetById(updatedTransaction.Id);
+                    if (originalTransaction != null)
+                    {
+                        var command = new EditTransactionCommand(new(_values), originalTransaction, updatedTransaction);
+                        _commandManager.ExecuteCommand(command);
+                    }
+                }
+            });
+
+            UndoCommand = new RelayCommand(_ => _commandManager.Undo());
+            RedoCommand = new RelayCommand(_ => _commandManager.Redo());
         }
 
         public override void Load()
