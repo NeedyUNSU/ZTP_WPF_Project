@@ -8,6 +8,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using ZTP_WPF_Project.MVVM.ViewModel;
 
 namespace ZTP_WPF_Project
 {
@@ -19,6 +20,7 @@ namespace ZTP_WPF_Project
         public MainWindow()
         {
             InitializeComponent();
+            this.DataContext = new MainViewModel();
         }
     }
 }

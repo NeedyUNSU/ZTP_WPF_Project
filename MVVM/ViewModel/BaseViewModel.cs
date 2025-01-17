@@ -33,4 +33,14 @@ namespace ZTP_WPF_Project.MVVM.ViewModel
         }
         public abstract bool Add(T obj);
     }
+
+    public abstract class BaseViewModel
+    {
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
 }

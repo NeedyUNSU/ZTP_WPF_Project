@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ZTP_WPF_Project.MVVM.Core;
 using ZTP_WPF_Project.MVVM.Model;
+using RelayCommand = ZTP_WPF_Project.MVVM.Core.RelayCommand;
 
 namespace ZTP_WPF_Project.MVVM.ViewModel
 {
@@ -22,9 +23,6 @@ namespace ZTP_WPF_Project.MVVM.ViewModel
             Notification.Attach(new Overrun(GetBudget()));
             Notification.Attach(new Congratulation(GetBudget()));
         }
-
-
-
 
         public override void Load()
         {

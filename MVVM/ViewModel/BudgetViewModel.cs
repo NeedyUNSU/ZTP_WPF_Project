@@ -4,39 +4,41 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ZTP_WPF_Project.MVVM.Model;
+using ZTP_WPF_Project.MVVM.Core;
+using RelayCommand = ZTP_WPF_Project.MVVM.Core.RelayCommand;
 
 namespace ZTP_WPF_Project.MVVM.ViewModel
 {
-    public class BudgetViewModel : BaseViewModel<BudgetModel>
+    public class BudgetViewModel : BaseViewModel
     {
-        public override bool Add(BudgetModel obj)
+        protected readonly TransactionCategoryViewModel _categoryVM;
+        protected readonly TransactionViewModel _transactionVM;
+
+        public BudgetViewModel(TransactionViewModel transactionVM, TransactionCategoryViewModel categoryVM)
         {
-            throw new NotImplementedException();
+            this._categoryVM = categoryVM;
+            this._transactionVM = transactionVM;
         }
 
-        public override bool DeleteById(string id)
+        public List<TransactionModel> GetAllBudgetTransactions()
         {
-            throw new NotImplementedException();
+            var budgetTransactions = _transactionVM.GetAll().Where(o => o._Type == TransactionType.Income).ToList();
+
+            return (budgetTransactions.Count > 0 ? budgetTransactions : new());
         }
 
-        public override BudgetModel? GetById(string id)
+        public float GetValues()
         {
-            throw new NotImplementedException();
+            var budgetTransactions = _transactionVM.GetAll().Where(o => o._Type == TransactionType.Income).ToList();
+
+            return (budgetTransactions.Count > 0 ? budgetTransactions.Sum(o=>o.Amount) : 0.0f);
         }
 
-        public override void Load()
+        public uint GetCount()
         {
-            throw new NotImplementedException();
-        }
+            var budgetTransactions = _transactionVM.GetAll().Where(o => o._Type == TransactionType.Income).ToList();
 
-        public override bool ModifyById(string id, BudgetModel obj)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override void Save()
-        {
-            throw new NotImplementedException();
+            return (uint)budgetTransactions.Count;
         }
     }
 }
