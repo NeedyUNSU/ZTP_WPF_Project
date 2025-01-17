@@ -43,6 +43,8 @@ namespace ZTP_WPF_Project.MVVM.Core
         private readonly Stack<TransactionCommand> _undoStack = new();
         private readonly Stack<TransactionCommand> _redoStack = new();
 
+        public static EventHandler? RequerySuggested { get; internal set; }
+
         public void ExecuteCommand(TransactionCommand command)
         {
             command.Execute(null);
