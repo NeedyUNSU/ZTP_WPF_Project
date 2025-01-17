@@ -4,7 +4,7 @@
              xmlns:local="clr-namespace:ZTP_WPF_Project.MVVM.Core"
              xmlns:viewModel="clr-namespace:ZTP_WPF_Project.MVVM.ViewModel"
              xmlns:view="clr-namespace:ZTP_WPF_Project.MVVM.View"
-             StartupUri="MainWindow.xaml">
+             StartupUri="MVVM/View/ReportView.xaml">
     <Application.Resources>
         <local:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
         <local:InverseBooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter"/>
