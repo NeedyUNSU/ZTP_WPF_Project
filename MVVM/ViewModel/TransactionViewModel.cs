@@ -176,7 +176,7 @@ namespace ZTP_WPF_Project.MVVM.ViewModel
             }
             else
             {
-                MessageBox.Show("Saving file.");
+                MessageBox.Show("Saving file failed.");
             }
         }
 
