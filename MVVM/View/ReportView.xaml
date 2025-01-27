@@ -35,8 +35,14 @@
            Grid.Row="1" 
            Margin="0,0,0,25"/>
 
-        <Button Content="Stwórz raport PDF" Command="{Binding CreatePDF}" 
-                HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="2" 
-                MinHeight="40" MinWidth="160"/>
+        <StackPanel  Orientation="Horizontal" Grid.Row="2" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <Button Content="Stwórz raport PDF" Command="{Binding CreatePDF}" 
+                    HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="2" 
+                    MinHeight="40" MinWidth="160"/>
+            <Button Content="Cofnij" Command="{Binding GoToMenuCommand}"
+                     Margin="60
+                    ,0,0,0" HorizontalAlignment="Right" VerticalAlignment="Stretch" Grid.Row="2" 
+                    MinHeight="40" MinWidth="160"/>
+        </StackPanel>
     </Grid>
 </UserControl>

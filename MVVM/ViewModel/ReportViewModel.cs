@@ -8,11 +8,30 @@ using ZTP_WPF_Project.MVVM.Model;
 using ZTP_WPF_Project.MVVM.Builder;
 using ZTP_WPF_Project.MVVM.Strategy;
 using ZTP_WPF_Project.MVVM.Core;
+using RelayCommand = ZTP_WPF_Project.MVVM.Core.RelayCommand;
+using Microsoft.Win32;
+using System.Text;
+using System.IO;
 
 namespace ZTP_WPF_Project.MVVM.ViewModel
 {
     public class ReportViewModel : ReportModel, INotifyPropertyChanged
     {
+        private MainViewModel MainContext
+        {
+            get
+            {
+                MainWindow mainWindow = Application.Current.MainWindow as MainWindow;
+                if (mainWindow != null && mainWindow.DataContext is MainViewModel)
+                {
+                    return mainWindow.DataContext as MainViewModel;
+                }
+                else
+                {
+                    throw new InvalidOperationException("Main data context must be MainWindowViewModel");
+                }
+            }
+        }
         public ICommand CreatePDF { get; }
         private bool _isYearlyReport;
         private bool _isMonthlyReport;
@@ -62,6 +81,8 @@ namespace ZTP_WPF_Project.MVVM.ViewModel
             }
         }
 
+        public ICommand GoToMenuCommand { get; }
+
         public ReportViewModel(TransactionViewModel transactionViewModel)
         {
             _transactionViewModel = transactionViewModel;// ?? throw new ArgumentNullException(nameof(transactionViewModel));
@@ -71,6 +92,7 @@ namespace ZTP_WPF_Project.MVVM.ViewModel
                 execute: _ => GenerateReport(),
                 canExecute: _ => _transactionViewModel?.GetAll()?.Any() == true
             );
+            GoToMenuCommand = new RelayCommand(_ => { MainContext.ShowTransactionPage.Execute(this); });
         }
 
         private void UpdateReportDateRange()
@@ -83,6 +105,31 @@ namespace ZTP_WPF_Project.MVVM.ViewModel
         protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        private void ExportToCSVFile()
+        {
+            SaveFileDialog saveFileDialog = new SaveFileDialog
+            {
+                Title = "Save Transactions as",
+                Filter = "CSV (*.csv)|*.csv|All Files (*.*)|*.*",
+                InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)
+            };
+
+            bool? result = saveFileDialog.ShowDialog();
+
+            if (result == true && _transactionViewModel.GetAll().Count > 0)
+            {
+                string filePath = saveFileDialog.FileName;
+                MessageBox.Show($"Saved file path: {filePath}");
+
+
+                string fileContent = "Id;Title;Description;Amount;Type;AddedDate;CategoryId;CategoryName;CategoryDesc;\n" + string.Join('\n', _transactionViewModel.GetAll().Count);
+            }
+            else
+            {
+                MessageBox.Show("Saving file failed.");
+            }
         }
 
         public void GenerateReport()
@@ -100,12 +147,10 @@ namespace ZTP_WPF_Project.MVVM.ViewModel
                     .Where(t => t.AddedDate >= StartDate && t.AddedDate <= EndDate)
                     .ToList();
 
+                //MessageBox.Show(string.Join("\n", transactions));
+
                 // Obliczenia
-                var incomeSum = transactions.Where(t => t._Type == TransactionType.Income).Sum(t => t.Amount);
-                var expenseSum = transactions.Where(t => t._Type == TransactionType.Expense).Sum(t => t.Amount);
-                var balance = incomeSum - expenseSum;
-                var maxIncome = transactions.Where(t => t._Type == TransactionType.Income).DefaultIfEmpty(new TransactionModel()).Max(t => t.Amount);
-                var maxExpense = transactions.Where(t => t._Type == TransactionType.Expense).DefaultIfEmpty(new TransactionModel()).Max(t => t.Amount);
+
 
                 // Tworzenie raportu niezależnie od tego, czy są transakcje, czy nie
                 var report = new ReportModel
@@ -123,14 +168,14 @@ namespace ZTP_WPF_Project.MVVM.ViewModel
                 var directory = new ReportingDirectory(reportingStrategy);
                 directory.ExecuteReportGeneration(report);
 
-                var builder = new ReportingBuilder();
-                builder.BuildPDF(report);
+ //               var builder = new ReportingBuilder();
+ //               builder.BuildPDF(report);
 
                 // Komunikat o sukcesie
                 MessageBox.Show("Raport PDF został wygenerowany pomyślnie!", "Sukces", MessageBoxButton.OK, MessageBoxImage.Information);
 
                 // Zamknięcie aplikacji (można to usunąć, jeśli nie chcesz zamykać aplikacji po wygenerowaniu raportu)
-                Application.Current.Shutdown();
+                GoToMenuCommand.Execute(this);
             }
             catch (Exception ex)
             {
