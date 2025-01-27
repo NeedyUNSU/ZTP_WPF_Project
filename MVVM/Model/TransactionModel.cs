@@ -85,6 +85,7 @@ namespace ZTP_WPF_Project.MVVM.Model
 
         public TransactionModel(TransactionModel original)
         {
+            Id = original.Id;
             Title = original.Title;
             Description = original.Description;
             Amount = original.Amount;

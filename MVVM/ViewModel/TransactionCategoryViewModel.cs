@@ -11,6 +11,16 @@ namespace ZTP_WPF_Project.MVVM.ViewModel
 {
     public class TransactionCategoryViewModel : BaseViewModel<TransactionCategoryModel>
     {
+
+        public TransactionCategoryViewModel()
+        {
+            Add(new TransactionCategoryModel("test0", "test"));
+            Add(new TransactionCategoryModel("test1", "test"));
+            Add(new TransactionCategoryModel("test2", "test"));
+            Add(new TransactionCategoryModel("test3", "test"));
+            Add(new TransactionCategoryModel("test4", "test"));
+        }
+
         public override bool Add(TransactionCategoryModel obj)
         {
             if (obj == null) return false;

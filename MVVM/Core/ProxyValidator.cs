@@ -65,6 +65,10 @@ namespace ZTP_WPF_Project.MVVM.Core
             set
             {
                 _transactionModel._Type = value;
+                if (value == TransactionType.Income)
+                {
+                    Category = null;
+                }
                 ValidateProperty(nameof(Type));
             }
         }
@@ -95,6 +99,11 @@ namespace ZTP_WPF_Project.MVVM.Core
             return _errors.ContainsKey(propertyName) ? _errors[propertyName] : null;
         }
 
+        public Dictionary<string, List<string>> GetErrors()
+        {
+            return _errors;
+        }
+
         private void ValidateProperty(string propertyName)
         {
             ClearErrors(propertyName);
@@ -112,7 +121,7 @@ namespace ZTP_WPF_Project.MVVM.Core
                     break;
 
                 case nameof(Amount):
-                    if (Amount <= 0)
+                    if (Amount <= 0.01f)
                         AddError(propertyName, "Amount must be greater than zero.");
                     break;
 

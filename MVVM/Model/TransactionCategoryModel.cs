@@ -30,5 +30,10 @@ namespace ZTP_WPF_Project.MVVM.Model
         {
             if (!string.IsNullOrWhiteSpace(Name) && !string.IsNullOrWhiteSpace(Description)) { return true; } else { return false; }
         }
+        public override string ToString()
+        {
+            return $"{Name}";
+        }
+
     }
 }

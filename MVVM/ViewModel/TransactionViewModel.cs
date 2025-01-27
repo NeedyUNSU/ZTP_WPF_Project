@@ -16,7 +16,7 @@ using System.ComponentModel;
 
 namespace ZTP_WPF_Project.MVVM.ViewModel
 {
-    public class TransactionViewModel : BaseViewModel<TransactionModel>, INotifyPropertyChanged
+    public class TransactionViewModel : BaseViewModel<TransactionModel>
     {
         protected readonly TransactionCategoryViewModel categoryVM;
         protected Notification Notification;
@@ -79,10 +79,170 @@ namespace ZTP_WPF_Project.MVVM.ViewModel
         public ICommand UndoCommand { get; }
         public ICommand RedoCommand { get; }
         public ICommand ExportToCSVCommand { get; }
+        public ICommand SaveCommand { get; }
+        public ICommand CancelCommand { get; }
 
         public ICommand ReportsPageCommand { get; }
         public ICommand BudgetPageCommand { get; }
         public ICommand ForecastPageCommand { get; }
+
+        private TransactionProxy validationObject;
+
+        public TransactionProxy ValidationObject
+        {
+            get 
+            {
+                return validationObject; 
+            }
+            set 
+            { 
+                validationObject = value;
+                OnPropertyChanged(nameof(TransactionObjectId));
+                OnPropertyChanged(nameof(TransactionObjectTitle));
+                OnPropertyChanged(nameof(TransactionObjectDescription));
+                OnPropertyChanged(nameof(TransactionObjectAmount));
+                OnPropertyChanged(nameof(TransactionObjectType));
+                OnPropertyChanged(nameof(TransactionObjectAddedDate));
+                OnPropertyChanged(nameof(TransactionObjectCategory));
+                OnPropertyChanged(nameof(TypeIsntIncome));
+            }
+        }
+
+        public string TransactionObjectId
+        {
+            get
+            {
+                return ValidationObject.Id;
+            }
+            set
+            {
+                ValidationObject.Id = value;
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(ValidationObject));
+            }
+        }
+
+        public string TransactionObjectTitle
+        {
+            get
+            {
+                return ValidationObject.Title;
+            }
+            set
+            {
+                ValidationObject.Title = value;
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(ValidationObject));
+            }
+        }
+
+        public string TransactionObjectDescription
+        {
+            get
+            {
+                return ValidationObject.Description;
+            }
+            set
+            {
+                ValidationObject.Description = value;
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(ValidationObject));
+            }
+        }
+
+        public float TransactionObjectAmount
+        {
+            get
+            {
+                return ValidationObject.Amount;
+            }
+            set
+            {
+                ValidationObject.Amount = value;
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(ValidationObject));
+            }
+        }
+
+        public TransactionType TransactionObjectType
+        {
+            get
+            {
+                return ValidationObject.Type;
+            }
+            set
+            {
+                ValidationObject.Type = value;
+                if (value == TransactionType.Income) TransactionObjectCategory = null;
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(ValidationObject));
+                OnPropertyChanged(nameof(TypeIsntIncome));
+            }
+        }
+
+        public DateTime TransactionObjectAddedDate
+        {
+            get
+            {
+                return ValidationObject.AddedDate;
+            }
+            set
+            {
+                ValidationObject.AddedDate = value;
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(ValidationObject));
+            }
+        }
+
+        public TransactionCategoryModel TransactionObjectCategory
+        {
+            get
+            {
+                return ValidationObject.Category;
+            }
+            set
+            {
+                ValidationObject.Category = value;
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(ValidationObject));
+            }
+        }
+
+        private ObservableCollection<TransactionCategoryModel> transactionCategories;
+        public ObservableCollection<TransactionCategoryModel> TransactionCategories
+        {
+            get { return transactionCategories; }
+            set { transactionCategories = value; OnPropertyChanged(); }
+        }
+
+        private ObservableCollection<TransactionType> transactionTypes;
+        public ObservableCollection<TransactionType> TransactionTypes
+        {
+            get { return transactionTypes; }
+            set { transactionTypes = value; OnPropertyChanged(); }
+        }
+
+        public bool TypeIsntIncome => TransactionObjectType != TransactionType.Income;
+
+        private bool isEditorOpen = false;
+
+        public bool IsEditorOpen
+        {
+            get { return isEditorOpen; }
+            set { isEditorOpen = value; OnPropertyChanged(); }
+        }
+
+        private bool isAddingOpen = false;
+
+        public bool IsAddingOpen
+        {
+            get { return isAddingOpen; }
+            set { isAddingOpen = value; OnPropertyChanged(); }
+        }
+
+
+
+
 
         public TransactionViewModel(TransactionCategoryViewModel categoryVM)
         {
@@ -94,26 +254,60 @@ namespace ZTP_WPF_Project.MVVM.ViewModel
             Notification.Attach(new Overrun(GetBudget()));
             Notification.Attach(new Congratulation(GetBudget()));
 
+            TransactionTypes = new ObservableCollection<TransactionType>(Enum.GetValues(typeof(TransactionType)) as TransactionType[]);
+            TransactionTypes.Remove(TransactionType.None);
+            TransactionCategories = new ObservableCollection<TransactionCategoryModel>();
+            TransactionCategories = new(categoryVM.GetAll());
+
             Add(new TransactionModel("TESTyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy", "testowa tranzakcja", 1000.00f, TransactionType.Income, null));
 
-            Add(new TransactionModel("TESTyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy2", "testowa tranzakcja", 10.00f, TransactionType.Expense, new TransactionCategoryModel("food", "jedzenie potrzebne do życia")));
+            Add(new TransactionModel("TESTyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy2", "testowa tranzakcja", 10.00f, TransactionType.Expense, categoryVM.GetAll().FirstOrDefault()));
 
+            validationObject = new TransactionProxy(new TransactionModel("","",0,TransactionType.Income,null));
 
-
-            TransactionsExpenseCache = new(GetAll().Where(_ => _._Type == TransactionType.Expense).ToList());
-            TransactionsIncomeCache = new(GetAll().Where(_ => _._Type == TransactionType.Income).ToList());
-
+            ReloadTables();
 
             AddCommand = new RelayCommand(param =>
             {
-                var transaction = param as TransactionModel;
-                if (transaction != null)
-                {
-                    var command = new AddTransactionCommand(new(_values), _values, transaction);
-                    _commandManager.ExecuteCommand(command);
-                    OnPropertyChanged(nameof(IsButtonEnabledActionUndo));
-                    OnPropertyChanged(nameof(IsButtonEnabledActionRedo));
-                }
+                var item = new TransactionModel("","",0,TransactionType.Income,null);
+                
+
+                ValidationObject = new TransactionProxy(item);
+                OnPropertyChanged(nameof(TransactionObjectId));
+                OnPropertyChanged(nameof(TransactionObjectTitle));
+                OnPropertyChanged(nameof(TransactionObjectDescription));
+                OnPropertyChanged(nameof(TransactionObjectAmount));
+                OnPropertyChanged(nameof(TransactionObjectType));
+                OnPropertyChanged(nameof(TransactionObjectAddedDate));
+                OnPropertyChanged(nameof(TransactionObjectCategory));
+                OnPropertyChanged(nameof(TypeIsntIncome));
+                IsAddingOpen = true;
+
+                //var transaction = param as TransactionModel;
+                //if (transaction != null)
+                //{
+                //    var command = new AddTransactionCommand(new(_values), _values, transaction);
+                //    _commandManager.ExecuteCommand(command);
+                //    OnPropertyChanged(nameof(IsButtonEnabledActionUndo));
+                //    OnPropertyChanged(nameof(IsButtonEnabledActionRedo));
+                //}
+            });
+
+            CancelCommand = new RelayCommand(param =>
+            {
+                ValidationObject = new TransactionProxy(new TransactionModel("", "", 0, TransactionType.Income, null));
+                OnPropertyChanged(nameof(TransactionObjectId));
+                OnPropertyChanged(nameof(TransactionObjectTitle));
+                OnPropertyChanged(nameof(TransactionObjectDescription));
+                OnPropertyChanged(nameof(TransactionObjectAmount));
+                OnPropertyChanged(nameof(TransactionObjectType));
+                OnPropertyChanged(nameof(TransactionObjectAddedDate));
+                OnPropertyChanged(nameof(TransactionObjectCategory));
+                OnPropertyChanged(nameof(TypeIsntIncome));
+
+                ReloadTables();
+                IsEditorOpen = false;
+                IsAddingOpen = false;
             });
 
             RemoveCommand = new RelayCommand(param =>
@@ -125,23 +319,34 @@ namespace ZTP_WPF_Project.MVVM.ViewModel
                     _commandManager.ExecuteCommand(command);
                     OnPropertyChanged(nameof(IsButtonEnabledActionUndo));
                     OnPropertyChanged(nameof(IsButtonEnabledActionRedo));
+
                 }
             });
 
             EditCommand = new RelayCommand(param =>
             {
-                var updatedTransaction = param as TransactionModel;
-                if (updatedTransaction != null)
-                {
-                    var originalTransaction = GetById(updatedTransaction.Id);
-                    if (originalTransaction != null)
-                    {
-                        var command = new EditTransactionCommand(new(_values), _values, originalTransaction, updatedTransaction);
-                        _commandManager.ExecuteCommand(command);
-                        OnPropertyChanged(nameof(IsButtonEnabledActionUndo));
-                        OnPropertyChanged(nameof(IsButtonEnabledActionRedo));
-                    }
-                }
+                ValidationObject = new TransactionProxy(new(SelectedTransactions));
+                OnPropertyChanged(nameof(TransactionObjectId));
+                OnPropertyChanged(nameof(TransactionObjectTitle));
+                OnPropertyChanged(nameof(TransactionObjectDescription));
+                OnPropertyChanged(nameof(TransactionObjectAmount));
+                OnPropertyChanged(nameof(TransactionObjectType));
+                OnPropertyChanged(nameof(TransactionObjectAddedDate));
+                OnPropertyChanged(nameof(TransactionObjectCategory));
+                OnPropertyChanged(nameof(TypeIsntIncome));
+                IsEditorOpen = true;
+                //var updatedTransaction = param as TransactionModel;
+                //if (updatedTransaction != null)
+                //{
+                //    var originalTransaction = GetById(updatedTransaction.Id);
+                //    if (originalTransaction != null)
+                //    {
+                //        var command = new EditTransactionCommand(new(_values), _values, originalTransaction, updatedTransaction);
+                //        _commandManager.ExecuteCommand(command);
+                //        OnPropertyChanged(nameof(IsButtonEnabledActionUndo));
+                //        OnPropertyChanged(nameof(IsButtonEnabledActionRedo));
+                //    }
+                //}
             });
 
             UndoCommand = new RelayCommand(_ => 
@@ -157,10 +362,10 @@ namespace ZTP_WPF_Project.MVVM.ViewModel
                 OnPropertyChanged(nameof(IsButtonEnabledActionRedo));
             });
 
+
             ReportsPageCommand = new RelayCommand(_ => OpenReportsPage());
             BudgetPageCommand = new RelayCommand(_ => OpenBudgetPage());
             ForecastPageCommand = new RelayCommand(_ => OpenForecastPage());
-
             ExportToCSVCommand = new RelayCommand(_ => ExportToCSVFile());
         }
 
@@ -203,6 +408,12 @@ namespace ZTP_WPF_Project.MVVM.ViewModel
             {
                 MessageBox.Show("Saving file failed.");
             }
+        }
+
+        private void ReloadTables()
+        {
+            TransactionsExpenseCache = new(GetAll().Where(_ => _._Type == TransactionType.Expense).ToList());
+            TransactionsIncomeCache = new(GetAll().Where(_ => _._Type == TransactionType.Income).ToList());
         }
 
         public override void Load()

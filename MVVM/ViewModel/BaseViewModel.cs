@@ -10,7 +10,7 @@ namespace ZTP_WPF_Project.MVVM.ViewModel
 {
     public abstract class BaseViewModel<T> : INotifyPropertyChanged
     {
-        protected List<T>? _values;
+        protected List<T>? _values = new();
 
         public event PropertyChangedEventHandler PropertyChanged;
 
