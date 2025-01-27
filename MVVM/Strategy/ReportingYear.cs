@@ -5,6 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ZTP_WPF_Project.MVVM.Model;
+using Microsoft.Win32;
+using System.Windows;
 
 namespace ZTP_WPF_Project.MVVM.Strategy
 {
@@ -19,60 +21,76 @@ namespace ZTP_WPF_Project.MVVM.Strategy
             {
                 throw new ArgumentNullException(nameof(report), "Report cannot be null.");
             }
-
-            // Generowanie PDF
-            Document.Create(container =>
+            SaveFileDialog saveFileDialog = new SaveFileDialog
             {
-                container.Page(page =>
+                FileName = $"{report.Title}",
+                Title = "Save Report as",
+                Filter = "PDF file (*.pdf)|*.pdf;",
+                InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)
+            };
+
+            bool? result = saveFileDialog.ShowDialog();
+
+            if (result == true)
+            {
+                // Generowanie PDF
+                string filePath = saveFileDialog.FileName;
+                Document.Create(container =>
                 {
-                    page.Margin(50);
-                    page.Content()
-                        .Column(col =>
-                        {
-                            // Tytuł raportu
-                            col.Item().Text("Raport finansowy roczny")
-                                .Bold()
-                                .FontSize(24)
-                                .AlignCenter();
-                            DateTime today = DateTime.Today;
-                            report.StartDate = today.AddYears(-1);
-                            // Okres raportu
-                            col.Item().Text($"Okres: {report.StartDate:yyyy.MM.dd} - {report.EndDate:yyyy.MM.dd}")
-                                .FontSize(14)
-                                .AlignCenter();
-
-                            // Przerwa między sekcjami
-                            col.Item().Height(20);
-                            var incomeSum = report.Transactions.Where(t => t._Type == TransactionType.Income).Sum(t => t.Amount);
-                            var expenseSum = report.Transactions.Where(t => t._Type == TransactionType.Expense).Sum(t => t.Amount);
-                            var balance = incomeSum - expenseSum;
-                            var maxIncome = report.Transactions.Where(t => t._Type == TransactionType.Income).DefaultIfEmpty(new TransactionModel()).Max(t => t.Amount);
-                            var maxExpense = report.Transactions.Where(t => t._Type == TransactionType.Expense).DefaultIfEmpty(new TransactionModel()).Max(t => t.Amount);
-                            var incomeCount = report.Transactions.Count(t => t._Type == TransactionType.Income);
-                            var expenseCount = report.Transactions.Count(t => t._Type == TransactionType.Expense);
-                            // Dane finansowe
-                            col.Item().Text($"Całkowity przychód: {incomeSum:C}");
-                            col.Item().Text($"Całkowity wydatek: {expenseSum:C}");
-                            col.Item().Text($"Bilans: {balance:C}");
-                            col.Item().Text($"Maksymalny przychód: {maxIncome:C}");
-                            col.Item().Text($"Maksymalny wydatek: {maxExpense:C}");
-                            col.Item().Text($"Liczba przychodów: {incomeCount}");
-                            col.Item().Text($"Liczba wydatków: {expenseCount}");
-
-                            foreach (var transaction in report.Transactions)
+                    container.Page(page =>
+                    {
+                        page.Margin(50);
+                        page.Content()
+                            .Column(col =>
                             {
-                                string transactionLine = transaction._Type == TransactionType.Income
-                                    ? $"- {transaction.Title}: +{transaction.Amount}"
-                                    : $"- {transaction.Title}: -{transaction.Amount}";
+                                // Tytuł raportu
+                                col.Item().Text("Raport finansowy roczny")
+                                    .Bold()
+                                    .FontSize(24)
+                                    .AlignCenter();
+                                DateTime today = DateTime.Today;
+                                report.StartDate = today.AddYears(-1);
+                                // Okres raportu
+                                col.Item().Text($"Okres: {report.StartDate:yyyy.MM.dd} -    {report.EndDate:yyyy.MM.dd}")
+                                    .FontSize(14)
+                                    .AlignCenter();
 
-                                col.Item().Text(transactionLine);
-                            }
-                        });
-                });
-            }).GeneratePdf($"{report.Title}.pdf");
+                                // Przerwa między sekcjami
+                                col.Item().Height(20);
+                                var incomeSum = report.Transactions.Where(t => t._Type == TransactionType.Income).Sum(t => t.Amount);
+                                var expenseSum = report.Transactions.Where(t => t._Type == TransactionType.Expense).Sum(t => t.Amount);
+                                var balance = incomeSum - expenseSum;
+                                var maxIncome = report.Transactions.Where(t => t._Type == TransactionType.Income).DefaultIfEmpty(new TransactionModel()).Max(t => t.Amount);
+                                var maxExpense = report.Transactions.Where(t => t._Type == TransactionType.Expense).DefaultIfEmpty(new TransactionModel()).Max(t => t.Amount);
+                                var incomeCount = report.Transactions.Count(t => t._Type == TransactionType.Income);
+                                var expenseCount = report.Transactions.Count(t => t._Type == TransactionType.Expense);
+                                // Dane finansowe
+                                col.Item().Text($"Całkowity przychód: {incomeSum:C}");
+                                col.Item().Text($"Całkowity wydatek: {expenseSum:C}");
+                                col.Item().Text($"Bilans: {balance:C}");
+                                col.Item().Text($"Maksymalny przychód: {maxIncome:C}");
+                                col.Item().Text($"Maksymalny wydatek: {maxExpense:C}");
+                                col.Item().Text($"Liczba przychodów: {incomeCount}");
+                                col.Item().Text($"Liczba wydatków: {expenseCount}");
 
-            // Logowanie do konsoli
-            Console.WriteLine($"Generowanie raportu rocznego zakończone: {report.Title}");
+                                foreach (var transaction in report.Transactions)
+                                {
+                                    string transactionLine = transaction._Type == TransactionType.Income
+                                        ? $"- {transaction.Title}: +{transaction.Amount}"
+                                        : $"- {transaction.Title}: -{transaction.Amount}";
+
+                                    col.Item().Text(transactionLine);
+                                }
+                            });
+                    });
+                }).GeneratePdf($"{filePath}");
+
+                MessageBox.Show("Raport PDF został wygenerowany pomyślnie!", "Sukces", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            else
+            {
+                MessageBox.Show("Saving pdf file failed.");
+            }
         }
     }
 }

@@ -98,8 +98,8 @@ namespace ZTP_WPF_Project.MVVM.ViewModel
         private void UpdateReportDateRange()
         {
             DateTime today = DateTime.Today;
-            DateTime startDate = IsYearlyReport ? today.AddYears(-1) : today.AddMonths(-1);
-            ReportDateRange = $"Od {startDate:dd.MM.yyyy} do {today:dd.MM.yyyy}";
+            StartDate = IsYearlyReport ? today.AddYears(-1) : today.AddMonths(-1);
+            ReportDateRange = $"Od {StartDate:dd.MM.yyyy} do {today:dd.MM.yyyy}";
         }
 
         protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
@@ -172,7 +172,7 @@ namespace ZTP_WPF_Project.MVVM.ViewModel
  //               builder.BuildPDF(report);
 
                 // Komunikat o sukcesie
-                MessageBox.Show("Raport PDF został wygenerowany pomyślnie!", "Sukces", MessageBoxButton.OK, MessageBoxImage.Information);
+               
 
                 // Zamknięcie aplikacji (można to usunąć, jeśli nie chcesz zamykać aplikacji po wygenerowaniu raportu)
                 GoToMenuCommand.Execute(this);
