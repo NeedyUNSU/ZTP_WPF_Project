@@ -57,4 +57,4 @@ An application for managing expenses and planning household budgets, allowing th
 
 1. Clone the repository:
    ```bash
-   git clone [https://github.com/NeedyUNSU/ZTP_WPF_Project/](https://github.com/NeedyUNSU/ZTP_WPF_Project/)
+   git clone https://github.com/NeedyUNSU/ZTP_WPF_Project/
