@@ -4,10 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using System.Windows; // application.Current.mainwindow etc.
 using ZTP_WPF_Project.MVVM.Core;
 using ZTP_WPF_Project.MVVM.Model;
 using CommandManager = ZTP_WPF_Project.MVVM.Core.CommandManager;
 using RelayCommand = ZTP_WPF_Project.MVVM.Core.RelayCommand;
+using System.Collections.ObjectModel;
 
 namespace ZTP_WPF_Project.MVVM.ViewModel
 {
@@ -20,34 +22,83 @@ namespace ZTP_WPF_Project.MVVM.ViewModel
 
         private TransactionModel selectedTransaction;
 
-        public TransactionModel SelectedTransaction
+        public TransactionModel SelectedTransactions
         {
             get { return selectedTransaction; }
             set { selectedTransaction = value; OnPropertyChanged(); }
         }
 
+        private MainViewModel MainContext
+        {
+            get
+            {
+                MainWindow mainWindow = Application.Current.MainWindow as MainWindow;
+                if (mainWindow != null && mainWindow.DataContext is MainViewModel)
+                {
+                    return mainWindow.DataContext as MainViewModel;
+                }
+                else
+                {
+                    throw new InvalidOperationException("Main data context must be MainWindowViewModel");
+                }
+            }
+        }
+
+        private ObservableCollection<TransactionModel> transactionsExpenseCache = new();
+
+        public ObservableCollection<TransactionModel> TransactionsExpenseCache
+        {
+            get { return transactionsExpenseCache; }
+            set { transactionsExpenseCache = value; OnPropertyChanged(); }
+        }
+
+        private ObservableCollection<TransactionModel> transactionsIncomeCache = new();
+
+        public ObservableCollection<TransactionModel> TransactionsIncomeCache
+        {
+            get { return transactionsIncomeCache; }
+            set { transactionsIncomeCache = value; OnPropertyChanged(); }
+        }
+
+        public bool IsButtonEnabled => SelectedTransactions != null;
 
         public ICommand AddCommand { get; }
         public ICommand RemoveCommand { get; }
         public ICommand EditCommand { get; }
         public ICommand UndoCommand { get; }
         public ICommand RedoCommand { get; }
+        public ICommand ExportToCSVCommand { get; }
+
+        public ICommand ReportsPageCommand { get; }
+        public ICommand BudgetPageCommand { get; }
+        public ICommand ForecastPageCommand { get; }
 
         public TransactionViewModel(TransactionCategoryViewModel categoryVM)
         {
             this.categoryVM = categoryVM;
+            _values = new();
 
             Notification = new Notification();
             Notification.Attach(new BudgetOverNinety(GetBudget()));
             Notification.Attach(new Overrun(GetBudget()));
             Notification.Attach(new Congratulation(GetBudget()));
+                        
+            Add(new TransactionModel("TESTyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy", "testowa tranzakcja", 1000.00f, TransactionType.Income, null));
+
+            Add(new TransactionModel("TESTyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy2", "testowa tranzakcja", 10.00f, TransactionType.Expense, new TransactionCategoryModel("food", "jedzenie potrzebne do życia")));
+
+
+
+            TransactionsExpenseCache = new(GetAll().Where(_ => _._Type == TransactionType.Expense).ToList());
+            TransactionsIncomeCache = new(GetAll().Where(_ => _._Type == TransactionType.Income).ToList());
+
 
             AddCommand = new RelayCommand(param =>
             {
                 var transaction = param as TransactionModel;
                 if (transaction != null)
                 {
-                    var command = new AddTransactionCommand(new(_values), transaction);
+                    var command = new AddTransactionCommand(new(_values), _values, transaction);
                     _commandManager.ExecuteCommand(command);
                 }
             });
@@ -57,7 +108,7 @@ namespace ZTP_WPF_Project.MVVM.ViewModel
                 var transaction = param as TransactionModel;
                 if (transaction != null)
                 {
-                    var command = new RemoveTransactionCommand(new(_values), transaction);
+                    var command = new RemoveTransactionCommand(new(_values), _values,  transaction);
                     _commandManager.ExecuteCommand(command);
                 }
             });
@@ -70,7 +121,7 @@ namespace ZTP_WPF_Project.MVVM.ViewModel
                     var originalTransaction = GetById(updatedTransaction.Id);
                     if (originalTransaction != null)
                     {
-                        var command = new EditTransactionCommand(new(_values), originalTransaction, updatedTransaction);
+                        var command = new EditTransactionCommand(new(_values), _values, originalTransaction, updatedTransaction);
                         _commandManager.ExecuteCommand(command);
                     }
                 }
@@ -78,7 +129,26 @@ namespace ZTP_WPF_Project.MVVM.ViewModel
 
             UndoCommand = new RelayCommand(_ => _commandManager.Undo());
             RedoCommand = new RelayCommand(_ => _commandManager.Redo());
+
+            ReportsPageCommand = new RelayCommand(_ => OpenReportsPage());
+            BudgetPageCommand = new RelayCommand(_ => OpenBudgetPage());
+            ForecastPageCommand = new RelayCommand(_ => OpenForecastPage());
         }
+
+        private void OpenReportsPage()       
+        {                                    
+            MainContext.ShowReportPage.Execute(this);  
+        }                                    
+                                             
+        private void OpenBudgetPage()        
+        {                                    
+            MainContext.ShowBudgetPage.Execute(this);
+        }                                    
+                                             
+        private void OpenForecastPage()      
+        {                                    
+            MainContext.CurrentView = this;  
+        }                                    
 
         public override void Load()
         {
@@ -173,7 +243,7 @@ namespace ZTP_WPF_Project.MVVM.ViewModel
         {
             if (obj == null) return false;
 
-            if (_values?.Where(x => x.Id == obj.Id).Where(x => x?.Title?.ToLower() == obj?.Title?.ToLower()).Where(x => x?.Description?.ToLower() == obj?.Description?.ToLower()).Where(x => x.Amount == obj.Amount).Where(x => x._Type.ToString().ToLower() == obj._Type.ToString().ToLower()).Count() == 0)
+            if (_values?.Where(x => x.Id == obj.Id).Where(x => x?.Title?.ToLower() == obj?.Title?.ToLower()).Where(x => x?.Description?.ToLower() == obj?.Description?.ToLower()).Count() == 0)
             {
                 _values.Add(obj);
 
@@ -199,5 +269,7 @@ namespace ZTP_WPF_Project.MVVM.ViewModel
             Notification.CurrentBudget = GetBudget();
             Notification.Expense = Expense;
         }
+
+
     }
 }

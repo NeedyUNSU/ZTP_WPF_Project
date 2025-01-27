@@ -13,5 +13,26 @@
             <view:UserView/>
         </DataTemplate>-->
 
+
+        <DataTemplate DataType="{x:Type viewModel:BudgetViewModel}">
+            <view:BudgetView/>
+        </DataTemplate>
+        
+        <DataTemplate DataType="{x:Type viewModel:TransactionViewModel}">
+            <view:TransactionsView/>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type viewModel:ReportViewModel}">
+            <view:ReportView/>
+        </DataTemplate>
+
+
+        <Style x:Key="NonEditableTextStyle" TargetType="TextBlock">
+            <Setter Property="TextWrapping" Value="Wrap" />
+            <Setter Property="TextTrimming" Value="None" />
+            <Setter Property="VerticalAlignment" Value="Top" />
+            <Setter Property="Focusable" Value="True" />
+        </Style>
+
     </Application.Resources>
 </Application>

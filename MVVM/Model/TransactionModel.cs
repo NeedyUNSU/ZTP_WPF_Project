@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ZTP_WPF_Project.MVVM.Core;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ZTP_WPF_Project.MVVM.Model
 {
@@ -41,7 +42,7 @@ namespace ZTP_WPF_Project.MVVM.Model
                 else
                 {
                     _categoryModel = null;
-                    throw new CustomException($"Invalid TransactionType refering to category.", new ArgumentException());
+                    //throw new CustomException($"Invalid TransactionType refering to category.", new ArgumentException());
                 }
             }
         }
@@ -80,6 +81,16 @@ namespace ZTP_WPF_Project.MVVM.Model
             Amount = amount;
             _Type = type;
             _category = category;
+        }
+
+        public TransactionModel(TransactionModel original)
+        {
+            Title = original.Title;
+            Description = original.Description;
+            Amount = original.Amount;
+            _Type = original._Type;
+            _category = original._category;
+            AddedDate = original.AddedDate;
         }
 
         // XML Handler

@@ -20,6 +20,15 @@ namespace ZTP_WPF_Project.MVVM.Core
             _transactionModel = transactionModel;
         }
 
+        public string? Id
+        {
+            get => _transactionModel.Id;
+            set
+            {
+                _transactionModel.Id = value;
+            }
+        }
+
         public string? Title
         {
             get => _transactionModel.Title;

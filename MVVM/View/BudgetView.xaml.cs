@@ -16,11 +16,11 @@ using System.Windows.Shapes;
 namespace ZTP_WPF_Project.MVVM.View
 {
     /// <summary>
-    /// Interaction logic for Transactions.xaml
+    /// Interaction logic for BudgetView.xaml
     /// </summary>
-    public partial class Transactions : UserControl
+    public partial class BudgetView : UserControl
     {
-        public Transactions()
+        public BudgetView()
         {
             InitializeComponent();
         }

@@ -5,6 +5,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using ZTP_WPF_Project.MVVM.Model;
 using ZTP_WPF_Project.MVVM.ViewModel;
 
@@ -86,11 +90,13 @@ namespace ZTP_WPF_Project.MVVM.Core
 
     public class AddTransactionCommand : TransactionCommand
     {
-        private readonly ObservableCollection<TransactionModel> _transactions;
+        private readonly List<TransactionModel> _transactions;
+        private readonly ObservableCollection<TransactionModel> _transactionsSaveState;
         private TransactionModel _transaction;
 
-        public AddTransactionCommand(ObservableCollection<TransactionModel> transactions, TransactionModel transaction)
+        public AddTransactionCommand(ObservableCollection<TransactionModel> transactionsSave, List<TransactionModel> transactions, TransactionModel transaction)
         {
+            _transactionsSaveState = transactionsSave;
             _transactions = transactions;
             _transaction = transaction;
         }
@@ -110,11 +116,13 @@ namespace ZTP_WPF_Project.MVVM.Core
 
     public class RemoveTransactionCommand : TransactionCommand
     {
-        private readonly ObservableCollection<TransactionModel> _transactions;
+        private readonly List<TransactionModel> _transactions;
+        private readonly ObservableCollection<TransactionModel> _transactionsSaveState;
         private TransactionModel _transaction;
 
-        public RemoveTransactionCommand(ObservableCollection<TransactionModel> transactions, TransactionModel transaction)
+        public RemoveTransactionCommand(ObservableCollection<TransactionModel> transactionsSave, List<TransactionModel> transactions, TransactionModel transaction)
         {
+            _transactionsSaveState = transactionsSave;
             _transactions = transactions;
             _transaction = transaction;
         }
@@ -136,12 +144,14 @@ namespace ZTP_WPF_Project.MVVM.Core
     {
         private readonly TransactionModel _originalTransaction;
         private readonly TransactionModel _updatedTransaction;
-        private readonly ObservableCollection<TransactionModel> _transactions;
+        private readonly List<TransactionModel> _transactions;
+        private readonly ObservableCollection<TransactionModel> _transactionsSaveState;
 
-        public EditTransactionCommand(ObservableCollection<TransactionModel> transactions, TransactionModel original, TransactionModel updated)
+        public EditTransactionCommand(ObservableCollection<TransactionModel> transactionsSave, List<TransactionModel> transactions, TransactionModel original, TransactionModel updated)
         {
+            _transactionsSaveState = transactionsSave;
             _transactions = transactions;
-            _originalTransaction = original;
+            _originalTransaction = new(original);
             _updatedTransaction = updated;
         }
 
