@@ -75,6 +75,9 @@ namespace ZTP_WPF_Project.MVVM.Core
                 _undoStack.Push(command);
             }
         }
+
+        public bool UndoStack => _undoStack.Any();
+        public bool RedoStack => _redoStack.Any();
     }
 
 

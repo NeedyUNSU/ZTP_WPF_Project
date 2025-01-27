@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace ZTP_WPF_Project.MVVM.ViewModel
 {
-    public abstract class BaseViewModel<T>
+    public abstract class BaseViewModel<T> : INotifyPropertyChanged
     {
         protected List<T>? _values;
 
@@ -34,7 +34,7 @@ namespace ZTP_WPF_Project.MVVM.ViewModel
         public abstract bool Add(T obj);
     }
 
-    public abstract class BaseViewModel
+    public abstract class BaseViewModel : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 

@@ -126,9 +126,9 @@
             <Button Margin="10,7,4,7" Padding="10,0,10,0" Content="Add" Command="{Binding AddCommand}" CommandParameter="{Binding SelectedTransactions}" />
             <Button Margin="0,7,4,7" Padding="10,0,10,0" Content="Remove" Command="{Binding RemoveCommand}" CommandParameter="{Binding SelectedTransactions}" IsEnabled="{Binding IsButtonEnabled}" />
             <Button Margin="0,7,4,7" Padding="10,0,10,0" Content="Edit" Command="{Binding EditCommand}" CommandParameter="{Binding SelectedTransactions}" IsEnabled="{Binding IsButtonEnabled}" />
-            <Button Margin="0,7,4,7" Padding="10,0,10,0" Content="Undo" Command="{Binding UndoCommand}" IsEnabled="{Binding IsButtonEnabled}" />
-            <Button Margin="0,7,4,7" Padding="10,0,10,0" Content="Redo" Command="{Binding RedoCommand}" IsEnabled="{Binding IsButtonEnabled}" />
-            <Button Margin="0,7,4,7" Padding="10,0,10,0" Content="Export to CSV" Command="{Binding ExportToCSVCommand}" />
+            <Button Margin="0,7,4,7" Padding="10,0,10,0" Content="Undo" Command="{Binding UndoCommand}" IsEnabled="{Binding IsButtonEnabledActionUndo}" />
+            <Button Margin="0,7,4,7" Padding="10,0,10,0" Content="Redo" Command="{Binding RedoCommand}" IsEnabled="{Binding IsButtonEnabledActionRedo}" />
+            <Button Margin="0,7,4,7" Padding="10,0,10,0" Content="Export to CSV" Command="{Binding ExportToCSVCommand}"  IsEnabled="{Binding IsButtonEnabledCSV}" />
         </StackPanel>
     </Grid>
 </UserControl>

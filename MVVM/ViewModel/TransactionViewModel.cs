@@ -12,10 +12,11 @@ using RelayCommand = ZTP_WPF_Project.MVVM.Core.RelayCommand;
 using System.Collections.ObjectModel;
 using Microsoft.Win32;
 using System.IO;
+using System.ComponentModel;
 
 namespace ZTP_WPF_Project.MVVM.ViewModel
 {
-    public class TransactionViewModel : BaseViewModel<TransactionModel>
+    public class TransactionViewModel : BaseViewModel<TransactionModel>, INotifyPropertyChanged
     {
         protected readonly TransactionCategoryViewModel categoryVM;
         protected Notification Notification;
@@ -27,7 +28,12 @@ namespace ZTP_WPF_Project.MVVM.ViewModel
         public TransactionModel SelectedTransactions
         {
             get { return selectedTransaction; }
-            set { selectedTransaction = value; OnPropertyChanged(); }
+            set
+            {
+                selectedTransaction = value;
+                OnPropertyChanged(nameof(SelectedTransactions));
+                OnPropertyChanged(nameof(IsButtonEnabled));
+            }
         }
 
         private MainViewModel MainContext
@@ -63,6 +69,9 @@ namespace ZTP_WPF_Project.MVVM.ViewModel
         }
 
         public bool IsButtonEnabled => SelectedTransactions != null;
+        public bool IsButtonEnabledCSV => _values.Count() > 0;
+        public bool IsButtonEnabledActionUndo => _commandManager.UndoStack;
+        public bool IsButtonEnabledActionRedo => _commandManager.RedoStack;
 
         public ICommand AddCommand { get; }
         public ICommand RemoveCommand { get; }
@@ -84,7 +93,7 @@ namespace ZTP_WPF_Project.MVVM.ViewModel
             Notification.Attach(new BudgetOverNinety(GetBudget()));
             Notification.Attach(new Overrun(GetBudget()));
             Notification.Attach(new Congratulation(GetBudget()));
-                        
+
             Add(new TransactionModel("TESTyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy", "testowa tranzakcja", 1000.00f, TransactionType.Income, null));
 
             Add(new TransactionModel("TESTyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy2", "testowa tranzakcja", 10.00f, TransactionType.Expense, new TransactionCategoryModel("food", "jedzenie potrzebne do życia")));
@@ -102,6 +111,8 @@ namespace ZTP_WPF_Project.MVVM.ViewModel
                 {
                     var command = new AddTransactionCommand(new(_values), _values, transaction);
                     _commandManager.ExecuteCommand(command);
+                    OnPropertyChanged(nameof(IsButtonEnabledActionUndo));
+                    OnPropertyChanged(nameof(IsButtonEnabledActionRedo));
                 }
             });
 
@@ -110,8 +121,10 @@ namespace ZTP_WPF_Project.MVVM.ViewModel
                 var transaction = param as TransactionModel;
                 if (transaction != null)
                 {
-                    var command = new RemoveTransactionCommand(new(_values), _values,  transaction);
+                    var command = new RemoveTransactionCommand(new(_values), _values, transaction);
                     _commandManager.ExecuteCommand(command);
+                    OnPropertyChanged(nameof(IsButtonEnabledActionUndo));
+                    OnPropertyChanged(nameof(IsButtonEnabledActionRedo));
                 }
             });
 
@@ -125,12 +138,24 @@ namespace ZTP_WPF_Project.MVVM.ViewModel
                     {
                         var command = new EditTransactionCommand(new(_values), _values, originalTransaction, updatedTransaction);
                         _commandManager.ExecuteCommand(command);
+                        OnPropertyChanged(nameof(IsButtonEnabledActionUndo));
+                        OnPropertyChanged(nameof(IsButtonEnabledActionRedo));
                     }
                 }
             });
 
-            UndoCommand = new RelayCommand(_ => _commandManager.Undo());
-            RedoCommand = new RelayCommand(_ => _commandManager.Redo());
+            UndoCommand = new RelayCommand(_ => 
+            { 
+                _commandManager.Undo();
+                OnPropertyChanged(nameof(IsButtonEnabledActionUndo));
+                OnPropertyChanged(nameof(IsButtonEnabledActionRedo));
+            });
+            RedoCommand = new RelayCommand(_ => 
+            { 
+                _commandManager.Redo();
+                OnPropertyChanged(nameof(IsButtonEnabledActionUndo));
+                OnPropertyChanged(nameof(IsButtonEnabledActionRedo));
+            });
 
             ReportsPageCommand = new RelayCommand(_ => OpenReportsPage());
             BudgetPageCommand = new RelayCommand(_ => OpenBudgetPage());
@@ -139,21 +164,21 @@ namespace ZTP_WPF_Project.MVVM.ViewModel
             ExportToCSVCommand = new RelayCommand(_ => ExportToCSVFile());
         }
 
-        private void OpenReportsPage()       
-        {                                    
-            MainContext.ShowReportPage.Execute(this);  
-        }                                    
-                                             
-        private void OpenBudgetPage()        
-        {                                    
-            MainContext.ShowBudgetPage.Execute(this);
-        }                                    
-                                             
-        private void OpenForecastPage()      
+        private void OpenReportsPage()
         {
-            MainContext.ShowForecastPage.Execute(this); 
-        }                
-        
+            MainContext.ShowReportPage.Execute(this);
+        }
+
+        private void OpenBudgetPage()
+        {
+            MainContext.ShowBudgetPage.Execute(this);
+        }
+
+        private void OpenForecastPage()
+        {
+            MainContext.ShowForecastPage.Execute(this);
+        }
+
         private void ExportToCSVFile()
         {
             SaveFileDialog saveFileDialog = new SaveFileDialog
@@ -291,7 +316,7 @@ namespace ZTP_WPF_Project.MVVM.ViewModel
         {
             if (_values == null) return 0;
 
-            return _values.Where(x=>x._Type == TransactionType.Income).Sum(o => o.Amount);
+            return _values.Where(x => x._Type == TransactionType.Income).Sum(o => o.Amount);
         }
 
         private void NotifyObservers(double Expense)
