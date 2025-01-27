@@ -12,7 +12,6 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using ZTP_WPF_Project.MVVM.ViewModel;
 
 namespace ZTP_WPF_Project.MVVM.View
 {
@@ -24,8 +23,6 @@ namespace ZTP_WPF_Project.MVVM.View
         public ReportView()
         {
             InitializeComponent();
-
-            //this.DataContext = new ReportViewModel();
         }
     }
 }
