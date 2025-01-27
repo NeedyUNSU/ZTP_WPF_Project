@@ -111,6 +111,12 @@ namespace ZTP_WPF_Project.MVVM.Model
                 else return true;
             } else return false;
         }
+
+        public override string ToString()
+        {
+            return $"{Id};{Title};{Description};{Amount};{StringType};{AddedDate};{(_categoryModel != null ? $"{CategoryId}" : "No Category Id")};{(_categoryModel != null ? $"{CategoryName}" : "No Category Name")};{(_categoryModel != null ? $"{CategoryDesc}" : "No Category Description")}";
+        }
+
     }
 
 	public enum TransactionType

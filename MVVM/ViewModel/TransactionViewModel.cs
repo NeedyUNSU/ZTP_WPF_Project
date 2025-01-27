@@ -10,6 +10,8 @@ using ZTP_WPF_Project.MVVM.Model;
 using CommandManager = ZTP_WPF_Project.MVVM.Core.CommandManager;
 using RelayCommand = ZTP_WPF_Project.MVVM.Core.RelayCommand;
 using System.Collections.ObjectModel;
+using Microsoft.Win32;
+using System.IO;
 
 namespace ZTP_WPF_Project.MVVM.ViewModel
 {
@@ -133,6 +135,8 @@ namespace ZTP_WPF_Project.MVVM.ViewModel
             ReportsPageCommand = new RelayCommand(_ => OpenReportsPage());
             BudgetPageCommand = new RelayCommand(_ => OpenBudgetPage());
             ForecastPageCommand = new RelayCommand(_ => OpenForecastPage());
+
+            ExportToCSVCommand = new RelayCommand(_ => ExportToCSVFile());
         }
 
         private void OpenReportsPage()       
@@ -148,7 +152,33 @@ namespace ZTP_WPF_Project.MVVM.ViewModel
         private void OpenForecastPage()      
         {
             MainContext.ShowForecastPage.Execute(this); 
-        }                                    
+        }                
+        
+        private void ExportToCSVFile()
+        {
+            SaveFileDialog saveFileDialog = new SaveFileDialog
+            {
+                Title = "Save Transactions as",
+                Filter = "CSV (*.csv)|*.csv|All Files (*.*)|*.*",
+                InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)
+            };
+
+            bool? result = saveFileDialog.ShowDialog();
+
+            if (result == true && _values.Count > 0)
+            {
+                string filePath = saveFileDialog.FileName;
+                MessageBox.Show($"Saved file path: {filePath}");
+
+
+                string fileContent = "Id;Title;Description;Amount;Type;AddedDate;CategoryId;CategoryName;CategoryDesc;\n" + string.Join('\n', _values);
+                File.WriteAllText(filePath, fileContent, Encoding.UTF8);
+            }
+            else
+            {
+                MessageBox.Show("Saving file.");
+            }
+        }
 
         public override void Load()
         {
