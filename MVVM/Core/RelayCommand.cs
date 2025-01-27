@@ -71,7 +71,7 @@ namespace ZTP_WPF_Project.MVVM.Core
             if (_redoStack.Any())
             {
                 var command = _redoStack.Pop();
-                command.Execute(null);
+                command.Execute(this);
                 _undoStack.Push(command);
             }
         }
@@ -93,11 +93,11 @@ namespace ZTP_WPF_Project.MVVM.Core
 
     public class AddTransactionCommand : TransactionCommand
     {
-        private readonly List<TransactionModel> _transactions;
-        private readonly ObservableCollection<TransactionModel> _transactionsSaveState;
+        private List<TransactionModel> _transactions;
+        private List<TransactionModel> _transactionsSaveState;
         private TransactionModel _transaction;
 
-        public AddTransactionCommand(ObservableCollection<TransactionModel> transactionsSave, List<TransactionModel> transactions, TransactionModel transaction)
+        public AddTransactionCommand(List<TransactionModel> transactionsSave, List<TransactionModel> transactions, TransactionModel transaction)
         {
             _transactionsSaveState = transactionsSave;
             _transactions = transactions;
@@ -114,16 +114,17 @@ namespace ZTP_WPF_Project.MVVM.Core
         public override void Undo()
         {
             _transactions.Remove(_transaction);
+            //_transactions = new(_transactionsSaveState);
         }
     }
 
     public class RemoveTransactionCommand : TransactionCommand
     {
-        private readonly List<TransactionModel> _transactions;
-        private readonly ObservableCollection<TransactionModel> _transactionsSaveState;
+        private List<TransactionModel> _transactions;
+        private List<TransactionModel> _transactionsSaveState;
         private TransactionModel _transaction;
 
-        public RemoveTransactionCommand(ObservableCollection<TransactionModel> transactionsSave, List<TransactionModel> transactions, TransactionModel transaction)
+        public RemoveTransactionCommand(List<TransactionModel> transactionsSave, List<TransactionModel> transactions, TransactionModel transaction)
         {
             _transactionsSaveState = transactionsSave;
             _transactions = transactions;
@@ -140,6 +141,7 @@ namespace ZTP_WPF_Project.MVVM.Core
         public override void Undo()
         {
             _transactions.Add(_transaction);
+            //_transactions = new(_transactionsSaveState);
         }
     }
 
@@ -147,14 +149,14 @@ namespace ZTP_WPF_Project.MVVM.Core
     {
         private readonly TransactionModel _originalTransaction;
         private readonly TransactionModel _updatedTransaction;
-        private readonly List<TransactionModel> _transactions;
-        private readonly ObservableCollection<TransactionModel> _transactionsSaveState;
+        private List<TransactionModel> _transactions;
+        private List<TransactionModel> _transactionsSaveState;
 
-        public EditTransactionCommand(ObservableCollection<TransactionModel> transactionsSave, List<TransactionModel> transactions, TransactionModel original, TransactionModel updated)
+        public EditTransactionCommand(List<TransactionModel> transactionsSave, List<TransactionModel> transactions, TransactionModel original, TransactionModel updated)
         {
             _transactionsSaveState = transactionsSave;
             _transactions = transactions;
-            _originalTransaction = new(original);
+            _originalTransaction = original;
             _updatedTransaction = updated;
         }
 
@@ -162,7 +164,7 @@ namespace ZTP_WPF_Project.MVVM.Core
 
         public override void Execute(object? parameter)
         {
-            int index = _transactions.IndexOf(_originalTransaction);
+            int index = _transactions.IndexOf(_transactions.Where(o => o.Id == _originalTransaction.Id).FirstOrDefault());
             if (index >= 0)
             {
                 _transactions[index] = _updatedTransaction;
@@ -171,11 +173,13 @@ namespace ZTP_WPF_Project.MVVM.Core
 
         public override void Undo()
         {
-            int index = _transactions.IndexOf(_updatedTransaction);
+            int index = _transactions.IndexOf(_transactions.Where(o => o.Id == _updatedTransaction.Id).FirstOrDefault());
             if (index >= 0)
             {
                 _transactions[index] = _originalTransaction;
             }
+
+            //_transactions = new(_transactionsSaveState);
         }
     }
 

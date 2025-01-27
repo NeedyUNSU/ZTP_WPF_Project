@@ -14,6 +14,8 @@ namespace ZTP_WPF_Project.MVVM.ViewModel
 
         public TransactionCategoryViewModel()
         {
+            Load();
+
             Add(new TransactionCategoryModel("test0", "test"));
             Add(new TransactionCategoryModel("test1", "test"));
             Add(new TransactionCategoryModel("test2", "test"));
@@ -25,9 +27,11 @@ namespace ZTP_WPF_Project.MVVM.ViewModel
         {
             if (obj == null) return false;
 
-            if (_values?.Where(x => x.Id == obj.Id).Where(x => x?.Name?.ToLower() == obj?.Name?.ToLower()).Where(x => x?.Description?.ToLower() == obj?.Description?.ToLower()).Count() == 0)
+            if (_values?.Where(x => x?.Name?.ToLower() == obj?.Name?.ToLower()).Where(x => x?.Description?.ToLower() == obj?.Description?.ToLower()).Count() == 0)
             {
                 _values.Add(new(obj));
+
+                Save();
                 return true;
             }
             return false;
@@ -38,6 +42,7 @@ namespace ZTP_WPF_Project.MVVM.ViewModel
             var val = _values?.Where(x => x.Id == id).FirstOrDefault();
             if (val == null) return false;
 
+            Save();
             return _values != null ? _values.Remove(val) : false;
         }
 
@@ -57,6 +62,7 @@ namespace ZTP_WPF_Project.MVVM.ViewModel
             if (val.Name != obj.Name) val.Name = obj.Name;
             if (val.Description != obj.Description) val.Description = obj.Description;
 
+            Save();
             return true;
         }
 

@@ -15,6 +15,8 @@ namespace ZTP_WPF_Project.MVVM.Core
         private readonly TransactionModel _transactionModel;
         private readonly Dictionary<string, List<string>> _errors = new();
 
+        public TransactionModel GetTransactionModel { get { return new TransactionModel(_transactionModel); } }
+
         public TransactionProxy(TransactionModel transactionModel)
         {
             _transactionModel = transactionModel;

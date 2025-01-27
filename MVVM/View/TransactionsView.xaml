@@ -144,7 +144,7 @@
 
 
         <Grid Background="White" Visibility="{Binding IsEditorOpen, Converter={StaticResource BooleanToVisibilityConverter}}">
-            <TextBlock Text="Editor" FontStyle="Normal" FontSize="25" FontWeight="Heavy" HorizontalAlignment="Center" Margin="10"/>
+            <TextBlock Text="{Binding EditorTitle}" FontStyle="Normal" FontSize="25" FontWeight="Heavy" HorizontalAlignment="Center" Margin="10"/>
             <Grid Margin="10" VerticalAlignment="Center">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />

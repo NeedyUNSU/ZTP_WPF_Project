@@ -71,6 +71,7 @@ namespace ZTP_WPF_Project.MVVM.ViewModel
 
         private void OpenBudgetPage()
         {
+            budgetVM.Refresh();
             CurrentView = budgetVM;
         }
 

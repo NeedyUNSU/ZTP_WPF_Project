@@ -195,8 +195,12 @@ namespace ZTP_WPF_Project.MVVM.ViewModel
 
         private void RefreshGui()
         {
-            var list = _transactionVM.GetAll();
+            Refresh();
+        }
 
+        public void Refresh()
+        {
+            var list = _transactionVM.GetAll();
 
             if (list != null)
             {
@@ -220,7 +224,7 @@ namespace ZTP_WPF_Project.MVVM.ViewModel
             OverALimit = (SumIncome - SumExpenses < 0 ? $"${SumIncome - SumExpenses}" : "None").ToString();
             CountOfTransactions = $"{ExpensesCount + IncomeCount}";
             AVGExpenses = $"${SumExpenses / ExpensesCount}";
-            AVGIncome = $"${SumIncome/IncomeCount}";
+            AVGIncome = $"${SumIncome / IncomeCount}";
         }
 
         public List<TransactionModel> GetAllBudgetTransactions()

@@ -13,6 +13,8 @@ using System.Collections.ObjectModel;
 using Microsoft.Win32;
 using System.IO;
 using System.ComponentModel;
+using System.Transactions;
+using System.Data.Common;
 
 namespace ZTP_WPF_Project.MVVM.ViewModel
 {
@@ -241,13 +243,20 @@ namespace ZTP_WPF_Project.MVVM.ViewModel
         }
 
 
+        private string editorTitle;
+
+        public string EditorTitle
+        {
+            get { return editorTitle; }
+            set { editorTitle = value; OnPropertyChanged(); }
+        }
 
 
 
         public TransactionViewModel(TransactionCategoryViewModel categoryVM)
         {
             this.categoryVM = categoryVM;
-            _values = new();
+            Load();
 
             Notification = new Notification();
             Notification.Attach(new BudgetOverNinety(GetBudget()));
@@ -267,6 +276,45 @@ namespace ZTP_WPF_Project.MVVM.ViewModel
 
             ReloadTables();
 
+            SaveCommand = new RelayCommand(param => 
+            {
+                if (ValidationObject == null) return;
+
+                if (IsAddingOpen)
+                {
+                    var transaction = ValidationObject;
+                    if (transaction != null)
+                    {
+                        var item = transaction.GetTransactionModel;
+                        var command = new AddTransactionCommand(new(_values), _values, item);
+                        _commandManager.ExecuteCommand(command);
+                        OnPropertyChanged(nameof(IsButtonEnabledActionUndo));
+                        OnPropertyChanged(nameof(IsButtonEnabledActionRedo));
+                        CancelCommand.Execute(this);
+                    }
+                }
+                else if (IsEditorOpen)
+                {
+                    var updatedTransaction = ValidationObject;
+                    if (updatedTransaction != null)
+                    {
+                        var item = updatedTransaction.GetTransactionModel;
+
+                        var originalTransaction = GetById(item.Id);
+                        if (originalTransaction != null)
+                        {
+                            var command = new EditTransactionCommand(new(_values), _values, originalTransaction, new(item));
+                            _commandManager.ExecuteCommand(command);
+                            OnPropertyChanged(nameof(IsButtonEnabledActionUndo));
+                            OnPropertyChanged(nameof(IsButtonEnabledActionRedo));
+                            CancelCommand.Execute(this);
+                        }
+                    }
+                }
+
+                ReloadTables();
+            });
+
             AddCommand = new RelayCommand(param =>
             {
                 var item = new TransactionModel("","",0,TransactionType.Income,null);
@@ -281,6 +329,8 @@ namespace ZTP_WPF_Project.MVVM.ViewModel
                 OnPropertyChanged(nameof(TransactionObjectAddedDate));
                 OnPropertyChanged(nameof(TransactionObjectCategory));
                 OnPropertyChanged(nameof(TypeIsntIncome));
+                EditorTitle = "Adder";
+                IsEditorOpen = true;
                 IsAddingOpen = true;
 
                 //var transaction = param as TransactionModel;
@@ -320,6 +370,8 @@ namespace ZTP_WPF_Project.MVVM.ViewModel
                     OnPropertyChanged(nameof(IsButtonEnabledActionUndo));
                     OnPropertyChanged(nameof(IsButtonEnabledActionRedo));
 
+                    ReloadTables();
+
                 }
             });
 
@@ -334,7 +386,9 @@ namespace ZTP_WPF_Project.MVVM.ViewModel
                 OnPropertyChanged(nameof(TransactionObjectAddedDate));
                 OnPropertyChanged(nameof(TransactionObjectCategory));
                 OnPropertyChanged(nameof(TypeIsntIncome));
+                EditorTitle = "Editor";
                 IsEditorOpen = true;
+
                 //var updatedTransaction = param as TransactionModel;
                 //if (updatedTransaction != null)
                 //{
@@ -354,12 +408,14 @@ namespace ZTP_WPF_Project.MVVM.ViewModel
                 _commandManager.Undo();
                 OnPropertyChanged(nameof(IsButtonEnabledActionUndo));
                 OnPropertyChanged(nameof(IsButtonEnabledActionRedo));
+                ReloadTables();
             });
             RedoCommand = new RelayCommand(_ => 
             { 
                 _commandManager.Redo();
                 OnPropertyChanged(nameof(IsButtonEnabledActionUndo));
                 OnPropertyChanged(nameof(IsButtonEnabledActionRedo));
+                ReloadTables();
             });
 
 
@@ -414,6 +470,7 @@ namespace ZTP_WPF_Project.MVVM.ViewModel
         {
             TransactionsExpenseCache = new(GetAll().Where(_ => _._Type == TransactionType.Expense).ToList());
             TransactionsIncomeCache = new(GetAll().Where(_ => _._Type == TransactionType.Income).ToList());
+            SelectedTransactions = null;
         }
 
         public override void Load()
@@ -489,6 +546,8 @@ namespace ZTP_WPF_Project.MVVM.ViewModel
                 NotifyObservers(obj.Amount);
             }
 
+            Save();
+
             return true;
         }
 
@@ -502,6 +561,7 @@ namespace ZTP_WPF_Project.MVVM.ViewModel
                 NotifyObservers(-1 * val.Amount);
             }
 
+            Save();
             return _values != null ? _values.Remove(val) : false;
         }
 
@@ -509,7 +569,7 @@ namespace ZTP_WPF_Project.MVVM.ViewModel
         {
             if (obj == null) return false;
 
-            if (_values?.Where(x => x.Id == obj.Id).Where(x => x?.Title?.ToLower() == obj?.Title?.ToLower()).Where(x => x?.Description?.ToLower() == obj?.Description?.ToLower()).Count() == 0)
+            if (_values?.Where(x => x?.Title?.ToLower() == obj?.Title?.ToLower()).Where(x => x?.Description?.ToLower() == obj?.Description?.ToLower()).Count() == 0)
             {
                 _values.Add(obj);
 
@@ -518,6 +578,7 @@ namespace ZTP_WPF_Project.MVVM.ViewModel
                     NotifyObservers(obj.Amount);
                 }
 
+                Save();
                 return true;
             }
             return false;

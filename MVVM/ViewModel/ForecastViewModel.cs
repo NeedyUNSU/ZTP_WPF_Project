@@ -7,36 +7,8 @@ using ZTP_WPF_Project.MVVM.Model;
 
 namespace ZTP_WPF_Project.MVVM.ViewModel
 {
-    public class ForecastViewModel : BaseViewModel<ForecastModel>
+    public class ForecastViewModel : BaseViewModel
     {
-        public override bool Add(ForecastModel obj)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override bool DeleteById(string id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override ForecastModel? GetById(string id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override void Load()
-        {
-            throw new NotImplementedException();
-        }
-
-        public override bool ModifyById(string id, ForecastModel obj)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override void Save()
-        {
-            throw new NotImplementedException();
-        }
+        
     }
 }

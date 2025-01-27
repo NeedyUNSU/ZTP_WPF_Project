@@ -26,6 +26,9 @@
             <view:ReportView/>
         </DataTemplate>
 
+        <DataTemplate DataType="{x:Type viewModel:ForecastViewModel}">
+            <view:ForecastView/>
+        </DataTemplate>
 
         <Style x:Key="NonEditableTextStyle" TargetType="TextBlock">
             <Setter Property="TextWrapping" Value="Wrap" />
