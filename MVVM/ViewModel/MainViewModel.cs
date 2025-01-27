@@ -21,6 +21,7 @@ namespace ZTP_WPF_Project.MVVM.ViewModel
         public TransactionViewModel transactionVM { get; set; }
         public BudgetViewModel budgetVM { get; set; }
         public ReportViewModel reportVM { get; set; }
+        public ForecastViewModel forecastVM { get; set; }
 
 
         private object _currentView;
@@ -40,6 +41,7 @@ namespace ZTP_WPF_Project.MVVM.ViewModel
         public ICommand ShowTransactionPage { get; }
         public ICommand ShowBudgetPage { get; }
         public ICommand ShowReportPage { get; }
+        public ICommand ShowForecastPage { get; }
 
         public MainViewModel()
         {
@@ -47,10 +49,12 @@ namespace ZTP_WPF_Project.MVVM.ViewModel
             transactionVM = new TransactionViewModel(transactionCategoryVM);
             budgetVM = new BudgetViewModel(transactionVM, transactionCategoryVM);
             reportVM = new ReportViewModel();
+            forecastVM = new ForecastViewModel();
 
             ShowTransactionPage = new RelayCommand(_ => OpenTransactionPage());
             ShowBudgetPage = new RelayCommand(_ => OpenBudgetPage());
             ShowReportPage = new RelayCommand(_ => OpenReportPage());
+            ShowForecastPage = new RelayCommand(_ => OpenForecastPage());
 
             CurrentView = transactionVM;
         }
@@ -68,6 +72,11 @@ namespace ZTP_WPF_Project.MVVM.ViewModel
         private void OpenBudgetPage()
         {
             CurrentView = budgetVM;
+        }
+
+        private void OpenForecastPage()
+        {
+            CurrentView = forecastVM;
         }
 
         protected void OnPropertyChanged([CallerMemberName] string propertyName = null)

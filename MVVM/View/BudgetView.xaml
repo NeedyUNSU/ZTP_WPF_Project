@@ -79,6 +79,12 @@
                     <TextBlock Text="{Binding LeftToSpend}" FontWeight="Heavy" Margin="5,0,0,0" FontSize="10" HorizontalAlignment="Left" VerticalAlignment="Top"/>
                     <TextBlock Text="How much you over a limit:" FontWeight="Normal" Margin="5,0,0,0" FontSize="10" HorizontalAlignment="Left" VerticalAlignment="Top"/>
                     <TextBlock Text="{Binding OverALimit}" FontWeight="Heavy" Margin="5,0,0,0" FontSize="10" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                    <TextBlock Text="How much Transactions you have:" FontWeight="Normal" Margin="5,0,0,0" FontSize="10" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                    <TextBlock Text="{Binding CountOfTransactions}" FontWeight="Heavy" Margin="5,0,0,0" FontSize="10" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                    <TextBlock Text="AVG of Income:" FontWeight="Normal" Margin="5,0,0,0" FontSize="10" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                    <TextBlock Text="{Binding AVGIncome}" FontWeight="Heavy" Margin="5,0,0,0" FontSize="10" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                    <TextBlock Text="AVG of Expenses:" FontWeight="Normal" Margin="5,0,0,0" FontSize="10" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                    <TextBlock Text="{Binding AVGExpenses}" FontWeight="Heavy" Margin="5,0,0,0" FontSize="10" HorizontalAlignment="Left" VerticalAlignment="Top"/>
                 </StackPanel>
 
             </Grid>

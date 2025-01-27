@@ -146,8 +146,8 @@ namespace ZTP_WPF_Project.MVVM.ViewModel
         }                                    
                                              
         private void OpenForecastPage()      
-        {                                    
-            MainContext.CurrentView = this;  
+        {
+            MainContext.ShowForecastPage.Execute(this); 
         }                                    
 
         public override void Load()
