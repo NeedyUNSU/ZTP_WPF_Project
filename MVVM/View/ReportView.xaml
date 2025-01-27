@@ -39,7 +39,7 @@
            Grid.Row="1" 
            Margin="0,0,0,25"/>
 
-        <Button Content="Zapisz Raport" Command="{Binding SaveReportCommand}" 
+        <Button Content="Stwórz raport PDF" Command="{Binding CreatePDF}" 
                 HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="2" 
                 MinHeight="40" MinWidth="160"/>
     </Grid>

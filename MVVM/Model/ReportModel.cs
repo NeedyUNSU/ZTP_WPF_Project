@@ -1,27 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ZTP_WPF_Project.MVVM.Model
 {
     public class ReportModel : BaseModel
     {
-        
-        public DateTime CreatedDate { get; set; } = DateTime.Now; // Data utworzenia raportu.
-        public decimal TotalIncome { get; set; } // Całkowite przychody (tylko do odczytu).
-        public decimal TotalExpenses { get; set; } // Całkowite wydatki (tylko do odczytu).
-        public decimal MaxIncome { get; set; } // maksymalny przychód
-        public decimal MaxExpenses { get; set; } //maksymalny wydatek
-        public decimal Amount_income { get; set; } //ilość przychodów
-        public decimal Amount_expenses { get; set; } //ilość wydatków
+        public string Title { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
+        public DateTime CreatedDate { get; set; } = DateTime.Now;
+        public DateTime StartDate { get; set; }
+        public DateTime EndDate { get; set; }
+        public List<TransactionModel> Transactions { get; set; } = new List<TransactionModel>();
 
-        public List<TransactionModel>? transactions;
-
+        // Walidacja: sprawdź, czy raport ma tytuł, opis, transakcje i poprawny zakres dat
         public override bool Validate()
         {
-            if (transactions?.Count != 0) return true; else return false;
+            return !string.IsNullOrWhiteSpace(Title) && Transactions.Count > 0 && StartDate < EndDate;
         }
     }
 }
