@@ -217,14 +217,14 @@ namespace ZTP_WPF_Project.MVVM.ViewModel
             ExpensesCount = list.Where(_ => _._Type == TransactionType.Expense).Count();
             IncomeCount = list.Where(_ => _._Type == TransactionType.Income).Count();
 
-            SumOfExpenses = $"${SumExpenses}";
-            SumOfIncome = $"${SumIncome}";
+            SumOfExpenses = $"{SumExpenses:C}";
+            SumOfIncome = $"{SumIncome:C}";
             PercentOfExpensesAndIncome = $"{(SumExpenses / SumIncome * 100)}%";
-            LeftToSpend = $"${SumIncome - SumExpenses}";
-            OverALimit = (SumIncome - SumExpenses < 0 ? $"${SumIncome - SumExpenses}" : "None").ToString();
-            CountOfTransactions = $"{ExpensesCount + IncomeCount}";
-            AVGExpenses = $"${SumExpenses / ExpensesCount}";
-            AVGIncome = $"${SumIncome / IncomeCount}";
+            LeftToSpend = $"{(SumIncome - SumExpenses):C}";
+            OverALimit = (SumIncome - SumExpenses < 0 ? $"${(SumIncome - SumExpenses):C}" : "None").ToString();
+            CountOfTransactions = $"{(ExpensesCount + IncomeCount):C}";
+            AVGExpenses = $"{(SumExpenses / ExpensesCount):C}";
+            AVGIncome = $"{(SumIncome / IncomeCount):C}";
         }
 
         public List<TransactionModel> GetAllBudgetTransactions()

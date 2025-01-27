@@ -44,7 +44,7 @@
                   SelectedValue="{Binding SelectedTransactions}"
                   MouseDoubleClick="DataGrid_MouseDoubleClick">
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="Id" Binding="{Binding Id}" Width="Auto" ElementStyle="{StaticResource NonEditableTextStyle}" />
+                            <!--<DataGridTextColumn Header="Id" Binding="{Binding Id}" Width="Auto" ElementStyle="{StaticResource NonEditableTextStyle}" />-->
 
                             <DataGridTemplateColumn Header="Title" Width="*">
                                 <DataGridTemplateColumn.CellTemplate>
@@ -64,7 +64,7 @@
 
                             <DataGridTextColumn Header="Amount" Binding="{Binding Amount, StringFormat=C}" Width="Auto" ElementStyle="{StaticResource NonEditableTextStyle}" />
 
-                            <DataGridTextColumn Header="Type" Binding="{Binding StringType}" Width="Auto" ElementStyle="{StaticResource NonEditableTextStyle}" />
+                            <!--<DataGridTextColumn Header="Type" Binding="{Binding StringType}" Width="Auto" ElementStyle="{StaticResource NonEditableTextStyle}" />-->
 
                             <DataGridTextColumn Header="Added Date" Binding="{Binding AddedDate, StringFormat=d}" Width="Auto" ElementStyle="{StaticResource NonEditableTextStyle}" />
 
@@ -92,7 +92,7 @@
                   SelectedValue="{Binding SelectedTransactions}"
                   MouseDoubleClick="DataGrid_MouseDoubleClick">
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="Id" Binding="{Binding Id}" IsReadOnly="True" Width="Auto" ElementStyle="{StaticResource NonEditableTextStyle}" />
+                            <!--<DataGridTextColumn Header="Id" Binding="{Binding Id}" IsReadOnly="True" Width="Auto" ElementStyle="{StaticResource NonEditableTextStyle}" />-->
 
                             <DataGridTemplateColumn Header="Title" Width="*">
                                 <DataGridTemplateColumn.CellTemplate>
@@ -112,7 +112,7 @@
 
                             <DataGridTextColumn Header="Amount" Binding="{Binding Amount, StringFormat=C}" IsReadOnly="True"  Width="Auto" ElementStyle="{StaticResource NonEditableTextStyle}" />
 
-                            <DataGridTextColumn Header="Type" Binding="{Binding StringType}" IsReadOnly="True" Width="Auto" ElementStyle="{StaticResource NonEditableTextStyle}" />
+                            <!--<DataGridTextColumn Header="Type" Binding="{Binding StringType}" IsReadOnly="True" Width="Auto" ElementStyle="{StaticResource NonEditableTextStyle}" />-->
 
                             <DataGridTextColumn Header="Added Date" Binding="{Binding AddedDate, StringFormat=d}" IsReadOnly="True"  Width="Auto" ElementStyle="{StaticResource NonEditableTextStyle}" />
                         </DataGrid.Columns>

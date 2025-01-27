@@ -268,9 +268,29 @@ namespace ZTP_WPF_Project.MVVM.ViewModel
             TransactionCategories = new ObservableCollection<TransactionCategoryModel>();
             TransactionCategories = new(categoryVM.GetAll());
 
-            Add(new TransactionModel("TESTyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy", "testowa tranzakcja", 1000.00f, TransactionType.Income, null));
+            Random random = new Random();
+            var categories = categoryVM.GetAll();
+            int transactionCount = 150;
 
-            Add(new TransactionModel("TESTyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy2", "testowa tranzakcja", 10.00f, TransactionType.Expense, categoryVM.GetAll().FirstOrDefault()));
+            for (int i = 0; i < transactionCount; i++)
+            {
+                string title = $"Test{i}";
+                string description = $"Testowa transakcja {i}";
+
+                float amount = random.Next(10, 1001) / (float)(random.Next(1, 11));
+
+                TransactionType type = (TransactionType)random.Next(1, 3);
+
+                DateTime date = DateTime.Now.AddDays(-random.Next(0, 365));
+
+                TransactionCategoryModel? category = null;
+                if (type == TransactionType.Expense && categories != null && categories.Any())
+                {
+                    category = categories[random.Next(categories.Count)];
+                }
+
+                Add(new TransactionModel(title, description, amount, type, category, date));
+            }
 
             validationObject = new TransactionProxy(new TransactionModel("","",0,TransactionType.Income,null));
 

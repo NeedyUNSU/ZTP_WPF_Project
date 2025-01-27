@@ -49,7 +49,7 @@ namespace ZTP_WPF_Project.MVVM.ViewModel
             transactionVM = new TransactionViewModel(transactionCategoryVM);
             budgetVM = new BudgetViewModel(transactionVM, transactionCategoryVM);
             reportVM = new ReportViewModel(transactionVM);
-            forecastVM = new ForecastViewModel();
+            forecastVM = new ForecastViewModel(transactionVM);
 
             ShowTransactionPage = new RelayCommand(_ => OpenTransactionPage());
             ShowBudgetPage = new RelayCommand(_ => OpenBudgetPage());
@@ -77,6 +77,7 @@ namespace ZTP_WPF_Project.MVVM.ViewModel
 
         private void OpenForecastPage()
         {
+            forecastVM.Load(transactionVM.GetAll());
             CurrentView = forecastVM;
         }
 
