@@ -64,20 +64,12 @@ namespace ZTP_WPF_Project.MVVM.ViewModel
 
         public ReportViewModel(TransactionViewModel transactionViewModel)
         {
-            _transactionViewModel = transactionViewModel ?? throw new ArgumentNullException(nameof(transactionViewModel));
+            _transactionViewModel = transactionViewModel;// ?? throw new ArgumentNullException(nameof(transactionViewModel));
             IsMonthlyReport = true;
-            CreatePDF = new RelayCommand(
-                execute: _ => GenerateReport(),
-                canExecute: _ => _transactionViewModel?.GetAll()?.Any() == true
-            );
-        }
-
-        public ReportViewModel()
-        {
             UpdateReportDateRange();
             CreatePDF = new RelayCommand(
                 execute: _ => GenerateReport(),
-                canExecute: _ => true
+                canExecute: _ => _transactionViewModel?.GetAll()?.Any() == true
             );
         }
 

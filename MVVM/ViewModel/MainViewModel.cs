@@ -48,7 +48,7 @@ namespace ZTP_WPF_Project.MVVM.ViewModel
             transactionCategoryVM = new TransactionCategoryViewModel();
             transactionVM = new TransactionViewModel(transactionCategoryVM);
             budgetVM = new BudgetViewModel(transactionVM, transactionCategoryVM);
-            reportVM = new ReportViewModel();
+            reportVM = new ReportViewModel(transactionVM);
             forecastVM = new ForecastViewModel();
 
             ShowTransactionPage = new RelayCommand(_ => OpenTransactionPage());

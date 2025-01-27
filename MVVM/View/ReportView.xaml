@@ -7,11 +7,7 @@
              xmlns:viewmodel="clr-namespace:ZTP_WPF_Project.MVVM.ViewModel"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-
-    <UserControl.DataContext>
-        <local:ReportViewModel />
-    </UserControl.DataContext>
-
+    
     <Grid Background="White">
         <!-- Nagłówek -->
         <Grid.RowDefinitions>
