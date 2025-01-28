@@ -13,7 +13,6 @@ namespace ZTP_WPF_Project.MVVM.Model
         public List<TransactionModel> Transactions { get; set; } = new List<TransactionModel>();
 
 
-        // Walidacja: sprawdź, czy raport ma tytuł, opis, transakcje i poprawny zakres dat
         public override bool Validate()
         {
             return !string.IsNullOrWhiteSpace(Title) && Transactions.Count > 0 && StartDate < EndDate;

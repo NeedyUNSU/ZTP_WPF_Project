@@ -85,7 +85,7 @@ namespace ZTP_WPF_Project.MVVM.ViewModel
 
         public ReportViewModel(TransactionViewModel transactionViewModel)
         {
-            _transactionViewModel = transactionViewModel;// ?? throw new ArgumentNullException(nameof(transactionViewModel));
+            _transactionViewModel = transactionViewModel;
             IsMonthlyReport = true;
             UpdateReportDateRange();
             CreatePDF = new RelayCommand(
@@ -142,17 +142,10 @@ namespace ZTP_WPF_Project.MVVM.ViewModel
                     return;
                 }
 
-                // Pobieranie listy transakcji
                 var transactions = _transactionViewModel.GetAll()
                     .Where(t => t.AddedDate >= StartDate && t.AddedDate <= EndDate)
                     .ToList();
 
-                //MessageBox.Show(string.Join("\n", transactions));
-
-                // Obliczenia
-
-
-                // Tworzenie raportu niezależnie od tego, czy są transakcje, czy nie
                 var report = new ReportModel
                 {
                     Title = IsMonthlyReport ? "Raport miesięczny" : "Raport roczny",
@@ -160,21 +153,13 @@ namespace ZTP_WPF_Project.MVVM.ViewModel
                     CreatedDate = DateTime.Now,
                     StartDate = StartDate,
                     EndDate = EndDate,
-                    Transactions = transactions // Pusta lista transakcji też zostanie uwzględniona
+                    Transactions = transactions 
                 };
 
-                // Generowanie raportu
                 IReportingStrategy reportingStrategy = IsMonthlyReport ? new ReportingMonth() : new ReportingYear();
                 var directory = new ReportingDirectory(reportingStrategy);
                 directory.ExecuteReportGeneration(report);
 
- //               var builder = new ReportingBuilder();
- //               builder.BuildPDF(report);
-
-                // Komunikat o sukcesie
-               
-
-                // Zamknięcie aplikacji (można to usunąć, jeśli nie chcesz zamykać aplikacji po wygenerowaniu raportu)
                 GoToMenuCommand.Execute(this);
             }
             catch (Exception ex)

@@ -43,19 +43,18 @@ namespace ZTP_WPF_Project.MVVM.Strategy
                         page.Content()
                             .Column(col =>
                             {
-                                // Tytuł raportu
+
                                 col.Item().Text("Raport finansowy roczny")
                                     .Bold()
                                     .FontSize(24)
                                     .AlignCenter();
                                 DateTime today = DateTime.Today;
                                 report.StartDate = today.AddYears(-1);
-                                // Okres raportu
+
                                 col.Item().Text($"Okres: {report.StartDate:yyyy.MM.dd} -    {report.EndDate:yyyy.MM.dd}")
                                     .FontSize(14)
                                     .AlignCenter();
 
-                                // Przerwa między sekcjami
                                 col.Item().Height(20);
                                 var incomeSum = report.Transactions.Where(t => t._Type == TransactionType.Income).Sum(t => t.Amount);
                                 var expenseSum = report.Transactions.Where(t => t._Type == TransactionType.Expense).Sum(t => t.Amount);
@@ -64,7 +63,7 @@ namespace ZTP_WPF_Project.MVVM.Strategy
                                 var maxExpense = report.Transactions.Where(t => t._Type == TransactionType.Expense).DefaultIfEmpty(new TransactionModel()).Max(t => t.Amount);
                                 var incomeCount = report.Transactions.Count(t => t._Type == TransactionType.Income);
                                 var expenseCount = report.Transactions.Count(t => t._Type == TransactionType.Expense);
-                                // Dane finansowe
+
                                 col.Item().Text($"Całkowity przychód: {incomeSum:C}");
                                 col.Item().Text($"Całkowity wydatek: {expenseSum:C}");
                                 col.Item().Text($"Bilans: {balance:C}");
