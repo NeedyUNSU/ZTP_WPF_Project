@@ -1,60 +1,110 @@
-# Expense and Budget Management Application
+# 💰 Expense and Budget Management
 
-An application for managing expenses and planning household budgets, allowing the user to track income, expenses, and generate reports. The user can plan a budget, set spending limits, forecast finances, and receive notifications about the budget status.
+A modern WPF desktop application to **manage personal finances**, track **income and expenses**, **plan budgets**, and generate insightful **financial reports**. Built with design patterns, robust validation, and user-friendly UI.
 
-## Features
+> 📊 Stay in control of your money. Plan. Predict. Prosper.
 
-### A. Transaction Management
-- **Adding transactions**: Allows adding new transactions to the system.
-- **Editing transactions**: Enables editing existing transactions.
-- **Deleting transactions**: Allows deleting transactions from the system.
-- **Displaying transaction list**: View transactions in a specified format.
+---
 
-### B. Reporting
-- **Generating reports**: Create monthly and yearly reports.
-- **Export to PDF**: Reports can be exported to PDF format.
-- **Monthly and yearly breakdown**: Reports can be organized based on the period.
-- **Adding headers and content**: Ability to add headers and content to reports.
+## ✨ Features
 
-### C. Budgeting
-- **Managing budgets**: Create, edit, and delete budgets.
-- **Budget overflow alerts**: Notification when the budget is exceeded.
-- **Financial forecasting analysis**: Analyze future expenses based on historical data.
+### 📒 Transaction Management
 
-### D. Forecasting
-- **Adding forecasts**: Create financial forecasts based on historical data.
+* ➕ Add, ✏️ edit, and ❌ delete transactions
+* 📋 View transactions in structured lists
 
-### E. Alerts
-- **Budget status notifications**: Notifications about budget overflow and achieved savings.
-- **Alert configuration**: Ability to set and manage notifications.
+### 📈 Reporting & Forecasting
 
-### F. Data Validation
-- **Validating data**: Validation of text formatting, currency, and number separators.
-- **Text formatting**: Adding capital letters, validating numeric values.
+* 🗓️ Monthly / yearly report generation
+* 📄 Export reports to PDF
+* 🔮 Forecast future expenses based on history
 
-### G. Command Handling
-- **Undoing actions**: Ability to undo performed actions.
-- **Redoing actions**: Restoring previously undone actions.
-- **Command history**: Managing the history of executed actions.
+### 💼 Budget Planning
 
-### H. System Views (UI)
-- **User interface**: An intuitive interface for managing transactions, reports, budgets, and forecasts.
-- **Data lists and details**: Displaying data as lists and detailed information.
-- **User input handling**: Supporting various types of user input.
+* 💡 Create and manage budgets
+* 🚨 Get notified when budgets are exceeded
+* 📉 Analyze expected future financials
 
-### I. Design Patterns Support
-- **Strategy Pattern**: Flexible changes in report generation methods.
-- **Proxy Pattern**: Adding additional validation features.
-- **Command Pattern**: Implementing undo and redo actions.
-- **Builder Pattern**: Configuring PDF file creation.
-- **Observer Pattern**: Notifying the user about the budget status.
+### 🔔 Alerts
 
-### J. Testing Module
-- **System functionality testing**: Tests for reporting, budgets, forecasts, and transactions.
-- **Alert testing**: Verifying the correctness of budget overflow and savings notifications.
+* Receive real-time **notifications** about:
 
-## How to Run the Application
+  * Exceeded budgets
+  * Achieved savings
+* Configure and customize alert triggers
 
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/NeedyUNSU/ZTP_WPF_Project/
+### ✅ Data Validation
+
+* Currency, numeric separators, and text formatting
+* Automatic capitalization and input checks
+
+### ↩️ Undo / Redo (Command Pattern)
+
+* Undo or redo any action with full command history
+
+### 🧠 Design Patterns Used
+
+* 🧱 **Builder** – PDF creation
+* 🎮 **Command** – Undo/redo actions
+* 👀 **Observer** – Budget status notifications
+* 🔒 **Proxy** – Data validation control
+* 🔀 **Strategy** – Dynamic report generation
+
+---
+
+## 🖼️ UI Preview
+
+Below are example screenshots of the application views. Update the links after adding the images to your repo:
+
+### 📊 Main View
+
+The main dashboard with quick access to transactions, budgets, and reports.
+![Main View](./assets/mainView.jpg)
+
+---
+
+### 📑 Report View
+
+Monthly and yearly reports with PDF export functionality.
+![Report View](./assets/reportView.jpg)
+
+---
+
+### 📉 Forecast View
+
+Financial forecasting based on historical data analysis.
+![Forecast View](./assets/forecastView.jpg)
+
+---
+
+### 📂 Export to CSV
+
+Export transaction data to CSV format with date range selection.
+![Export to CSV](./assets/exportToCSV.jpg)
+
+---
+
+### 📝 Editor View
+
+Adding and editing individual transactions through an intuitive form.
+![Editor View](./assets/editorView.jpg)
+
+---
+
+### 💼 Budget View
+
+Creating, editing, and monitoring budgets with overflow alerts.
+![Budget View](./assets/budgetView.jpg)
+
+---
+
+If you want, I can also prepare this section formatted as a table or side-by-side thumbnails in Markdown or HTML. Would you like that?
+
+---
+
+## 🛠️ Technologies Used
+
+* `C# .NET 8.0`
+* `WPF (MVVM)`
+* `QuestPDF` (PDF generation)
+* Manual implementation of design patterns (no external MVVM frameworks)
